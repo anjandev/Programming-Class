@@ -3,27 +3,38 @@
 def play_game():
     
     chances = 5
-    
-    guessthis = str(input("Player 1: Enter a word you would like Player 2 to guess"))
-    
-    letters = list(guessthis)
-    numlet = len(letters)
-    
+    letters = []
     guessed = []
     fullyguessed = []
     
-    for i in range(numlet):
-        guessed.append("_")
-        fullyguessed.append("_")
+    numwords = int(input("Player 1: Enter the number of words you would like Player 2 to guess"))
     
-    print guessed
+    for s in range(numwords):
+        guessthis = str(input("Player 1: Enter a words you would like Player 2 to guess"))
+        letters.append(list(guessthis))
+        letters.append(" ")
+        for i in range(len(guessthis)):
+            guessed.append("_")
+            fullyguessed.append("_")
+        guessed.append(" ")
+        fullyguessed.append(" ")
+    
+    #trying to fix [[Y, O, L, O], ,[S, W, A, G,], ]
+    guessed = [l[0] for l in guessed]
+    fullyguessed = [l[0] for l in fullyguessed]
+    letlis = [l[0] for l in letters]
+    
+    print letters
+    
+    for i in range(len(guessed)):
+        print guessed[i],
 
     while chances > 0:
 
         letter_guess = str(input("Player 2: Guess a letter."))
         
         if letter_guess in letters:
-			# Finds the place of the letter player 2 guessed in letters list 
+            # Finds the place of the letter player 2 guessed in letters list 
             guessednum = letters.index(letter_guess)
             # Deletes the _ placeholder from guessed list and inserts the proper letter.
             guessed.pop(guessednum)
@@ -31,17 +42,20 @@ def play_game():
             # Deletes the guessed letter from the letters list and inserts a place holder.
             letters.pop(guessednum)
             letters.insert(guessednum, "_")
-            print "\n", guessed
+            #FIX THIS
+            print "\n", 
+            for i in range(len(guessed)):
+                print str(guessed[i]),
             
             if letters == fullyguessed:
-                print "Player 2 Wins!"
+                print "\nPlayer 2 Wins!"
                 break
             
         else:
             chances -= 1
     
     else: 
-        print "player 2 loses"
+        print "\nPlayer 2 loses"
         
         
 play_game()
