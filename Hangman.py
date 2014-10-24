@@ -11,23 +11,17 @@ def play_game():
     
     for s in range(numwords):
         guessthis = str(input("Player 1: Enter a words you would like Player 2 to guess"))
-        letters.append(list(guessthis))
+        letters.extend(list(guessthis))
         letters.append(" ")
         for i in range(len(guessthis)):
             guessed.append("_")
             fullyguessed.append("_")
         guessed.append(" ")
         fullyguessed.append(" ")
-    
-    #trying to fix [[Y, O, L, O], ,[S, W, A, G,], ]
-    guessed = [l[0] for l in guessed]
-    fullyguessed = [l[0] for l in fullyguessed]
-    letlis = [l[0] for l in letters]
-    
-    print letters
+        
     
     for i in range(len(guessed)):
-        print guessed[i],
+        print guessed[i], 
 
     while chances > 0:
 
@@ -42,8 +36,9 @@ def play_game():
             # Deletes the guessed letter from the letters list and inserts a place holder.
             letters.pop(guessednum)
             letters.insert(guessednum, "_")
-            #FIX THIS
-            print "\n", 
+            
+            print "\n"
+            
             for i in range(len(guessed)):
                 print str(guessed[i]),
             
