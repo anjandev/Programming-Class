@@ -9,19 +9,22 @@ def play_game():
     
     numwords = int(input("Player 1: Enter the number of words you would like Player 2 to guess"))
     
+    
     for s in range(numwords):
         guessthis = str(input("Player 1: Enter a words you would like Player 2 to guess"))
         letters.extend(list(guessthis))
         letters.append(" ")
+        
         for i in range(len(guessthis)):
             guessed.append("_")
             fullyguessed.append("_")
         guessed.append(" ")
         fullyguessed.append(" ")
-        
     
     for i in range(len(guessed)):
         print guessed[i], 
+
+
 
     while chances > 0:
 
