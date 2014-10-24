@@ -1,4 +1,4 @@
-# Hangman game
+# Hangman game. 
 
 def play_game():
     
@@ -32,7 +32,7 @@ def play_game():
         
         if letter_guess in letters:
             
-            
+            # Allows porgram to repeatdly search for same letters if multiple of the same letters exist in a phrase. 
             for i in range(letters.count(letter_guess)):
                 # Finds the place of the letter player 2 guessed in letters list 
                 guessednum = letters.index(letter_guess)
