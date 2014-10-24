@@ -28,14 +28,17 @@ def play_game():
         letter_guess = str(input("Player 2: Guess a letter."))
         
         if letter_guess in letters:
-            # Finds the place of the letter player 2 guessed in letters list 
-            guessednum = letters.index(letter_guess)
-            # Deletes the _ placeholder from guessed list and inserts the proper letter.
-            guessed.pop(guessednum)
-            guessed.insert(guessednum, letter_guess)
-            # Deletes the guessed letter from the letters list and inserts a place holder.
-            letters.pop(guessednum)
-            letters.insert(guessednum, "_")
+            
+            
+            for i in range(letters.count(letter_guess)):
+                # Finds the place of the letter player 2 guessed in letters list 
+                guessednum = letters.index(letter_guess)
+                # Deletes the _ placeholder from guessed list and inserts the proper letter.
+                guessed.pop(guessednum)
+                guessed.insert(guessednum, letter_guess)
+                # Deletes the guessed letter from the letters list and inserts a place holder.
+                letters.pop(guessednum)
+                letters.insert(guessednum, "_")
             
             print "\n"
             
