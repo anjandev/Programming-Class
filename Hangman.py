@@ -27,9 +27,10 @@ def new_words():
     for s in range(numwords):
         guessthis = str(input("Player 1: Enter a words you would like Player 2 to guess"))
         letters.extend(list(guessthis))
-        letters.append(" ")  
-    	guessed.append(" ")
-    	fullyguessed.append(" ") 
+        letters.append(" ")
+        
+        hide_words(letters)
+
 
 def hide_words(letters):
     # Takes in a list of words and makes a list of hangman chacters with all of the letters replaced by underscores
@@ -38,31 +39,36 @@ def hide_words(letters):
     global fullyguessed
     global guessthis
     
-    	for i in range(len(guessthis)):
-        	guessed.append("_")
-        	fullyguessed.append("_")
-         
+    for i in range(len(guessthis)):
+        guessed.append("_")
+        fullyguessed.append("_")
+    guessed.append(" ")
+    fullyguessed.append(" ") 
 
 def reveal_letter(letter_guess):     
-    #Takes in a letter, checks whether the letter is in the word list and replaces the underscore in the hangman list by letter.
+   #Takes in a letter, checks whether the letter is in the word list and replaces the underscore in the hangman list by letter.
     
-    global letters
-    global guessed
+   global letters
+   global guessed
     
-    if letter_guess in letters:
+   if letter_guess in letters:         
+   # Allows porgram to repeatdly search for same letters if multiple of the same letters exist in a phrase. 
+    for i in range(letters.count(letter_guess)):
             
-        # Allows porgram to repeatdly search for same letters if multiple of the same letters exist in a phrase. 
-        for i in range(letters.count(letter_guess)):
+        # Finds the place of the letter player 2 guessed in letters list 
+        guessednum = letters.index(letter_guess)
+        # Deletes the _ placeholder from guessed list and inserts the proper letter.
+        guessed.pop(guessednum)
+        guessed.insert(guessednum, letter_guess)
+        # Deletes the guessed letter from the letters list and inserts a place holder.
+        letters.pop(guessednum)
+        letters.insert(guessednum, "_")
             
-            # Finds the place of the letter player 2 guessed in letters list 
-            guessednum = letters.index(letter_guess)
-            # Deletes the _ placeholder from guessed list and inserts the proper letter.
-            guessed.pop(guessednum)
-            guessed.insert(guessednum, letter_guess)
-            # Deletes the guessed letter from the letters list and inserts a place holder.
-            letters.pop(guessednum)
-            letters.insert(guessednum, "_")       
-
+    print "\n"
+        
+    for i in range(len(guessed)):
+       print guessed[i],
+     
         
     
 def play_game(): 
@@ -76,7 +82,6 @@ def play_game():
     
     new_words()
     
-    hide_words(letters)
     
     print_words()
     
@@ -86,12 +91,8 @@ def play_game():
         letter_guess = str(input("Player 2: Guess a letter."))
         
         reveal_letter(letter_guess)
-            
         print "\n"
-            
-        for i in range(len(guessed)):
-            print guessed[i],
-            
+        
         if letters == fullyguessed:
             print "\nPlayer 2 Wins!"
             break
