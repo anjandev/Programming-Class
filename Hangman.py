@@ -4,6 +4,7 @@ letters = []
 guessed = []
 fullyguessed = []
 guessthis = " "
+numwords = " "
 
 
 def print_words():
@@ -14,6 +15,7 @@ def print_words():
     for i in range(len(guessed)):
         print guessed[i],                
     
+    
 def new_words():
     # Asks the first player how many words they will input, then asks for each word and stores them to a list.  
     
@@ -21,6 +23,7 @@ def new_words():
     global guessed
     global fullyguessed
     global guessthis
+    global numwords
     
     numwords = int(input("Player 1: Enter the number of words you would like Player 2 to guess"))
     
@@ -28,27 +31,33 @@ def new_words():
         guessthis = str(input("Player 1: Enter a words you would like Player 2 to guess"))
         letters.extend(list(guessthis))
         letters.append(" ")
-        
-        hide_words(letters)
 
-def hide_words(letters):
+
+def hide_words():
     # Takes in a list of words and makes a list of hangman chacters with all of the letters replaced by underscores
    
     global guessed
     global fullyguessed
     global guessthis
+    global numwords
     
-    for i in range(len(guessthis)):
-        guessed.append("_")
-        fullyguessed.append("_")
-    guessed.append(" ")
-    fullyguessed.append(" ") 
+    for s in range(numwords):
+        
+        for i in range(len(guessthis)):
+            guessed.append("_")
+            fullyguessed.append("_")
+        
+        guessed.append(" ")
+        fullyguessed.append(" ") 
 
-def reveal_letter(letter_guess):     
+
+def reveal_letter():     
    #Takes in a letter, checks whether the letter is in the word list and replaces the underscore in the hangman list by letter.
     
     global letters
     global guessed
+    
+    letter_guess = str(input("Player 2: Guess a letter."))
     
     if letter_guess in letters:
             
@@ -68,9 +77,11 @@ def reveal_letter(letter_guess):
         
         for i in range(len(guessed)):
             print guessed[i],
+            
     else:
         chances -= 1
         
+    
     
 def play_game(): 
 # Main game function. Gets new words from player 1, hides the word, and asks for a guess and reveals the letter guessed. Keeps
@@ -82,17 +93,13 @@ def play_game():
     global fullyguessed
     
     new_words()
-    
-    
+    hide_words()
     print_words()
-    
+
 
     while chances > 0:
         
-        letter_guess = str(input("Player 2: Guess a letter."))
-        
-    
-        reveal_letter(letter_guess)
+        reveal_letter()
     
         print "\n"
         
@@ -100,10 +107,9 @@ def play_game():
             print "\nPlayer 2 Wins!"
             break
             
-        
-    
     else: 
         print "\nPlayer 2 loses"
         
+
 
 play_game()
