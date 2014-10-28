@@ -52,7 +52,7 @@ def hide_words():
 
 
 def reveal_letter():     
-   #Takes in a letter, checks whether the letter is in the word list and replaces the underscore in the hangman list by letter.
+    #Takes in a letter, checks whether the letter is in the word list and replaces the underscore in the hangman list by letter.
     
     global letters
     global guessed
@@ -84,8 +84,8 @@ def reveal_letter():
     
     
 def play_game(): 
-# Main game function. Gets new words from player 1, hides the word, and asks for a guess and reveals the letter guessed. Keeps
-# keeps track of number of chances remaining and whether the game has been won or lost.
+    # Main game function. Gets new words from player 1, hides the word, and asks for a guess and reveals the letter guessed. Keeps
+    # keeps track of number of chances remaining and whether the game has been won or lost.
     
     global chances
     global guessed
