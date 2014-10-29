@@ -1,10 +1,33 @@
 # Hangman game. 
-chances = 5
+
+import simplegui
+
+chances = 6
 letters = []
 guessed = []
 fullyguessed = []
 guessthis = " "
 numwords = " "
+letter_guess = " "
+
+def draw_hang():
+    # Drawing image. Currently not working inside gui
+    global chances
+    
+    if chances == 6:
+        image = simplegui.load_image('http://i.imgur.com/lA2HT5B.png')
+    elif chances == 5:
+        image = simplegui.load_image('http://i.imgur.com/02Vq0IX.png')
+    elif chances == 4:
+        image = simplegui.load_image('http://i.imgur.com/MiX8ba6.png')
+    elif chances == 3:
+        image = simplegui.load_image('http://i.imgur.com/EII8fNV.png')
+    elif chances == 2:
+        image = simplegui.load_image('http://i.imgur.com/JxMC9QI.png')
+    elif chances == 1:
+        image = simplegui.load_image('http://i.imgur.com/rzxytiq.png')
+    else:
+        image = simplegui.load_image('http://i.imgur.com/Myb9nVM.png')
 
 
 def print_words():
@@ -54,9 +77,13 @@ def hide_words():
 def reveal_letter():     
     #Takes in a letter, checks whether the letter is in the word list and replaces the underscore in the hangman list by letter.
     
+	soundwrongword = simplegui.load_sound('http://themushroomkingdom.net/sounds/wav/smb/smb_warning.wav')
+
     global letters
     global guessed
     global chances
+    global letter_guess
+    
     
     letter_guess = str(input("Player 2: Guess a letter."))
     
@@ -81,17 +108,12 @@ def reveal_letter():
             
     else:
         chances -= 1
+        soundwrongword.play()
         
-        if chances == 4:
-            print "\n\nNot in list! You have", chances, "chances left"
-        
-        elif chances > 0: 
-            print "\nNot in list! You have", chances, "chances left"
+        if chances > 0:
+            print "\n\n", letter_guess, "is not in list! You have", chances, "chances left"
             
-        
-        
-    
-    
+            
 def play_game(): 
     # Main game function. Gets new words from player 1, hides the word, and asks for a guess and reveals the letter guessed. Keeps
     # keeps track of number of chances remaining and whether the game has been won or lost.
@@ -100,24 +122,28 @@ def play_game():
     global guessed
     global letters
     global fullyguessed
+    global letter_guess
     
+    soundlost = simplegui.load_sound('http://themushroomkingdom.net/sounds/wav/smb/smb_gameover.wav')
+    soundwin = simplegui.load_sound('http://themushroomkingdom.net/sounds/wav/smb/smb_stage_clear.wav')
+
     new_words()
     hide_words()
     print_words()
-
 
     while chances > 0:
         
         reveal_letter()
     
-        
         if letters == fullyguessed:
             print "\nPlayer 2 Wins!"
+            soundwin.play()
             break
             
+            
     else: 
-        print "\nPlayer 2 loses"
-        
+        print "\n\n", letter_guess, "is not in list! Player 2 loses"
+        soundlost.play()
 
 
 play_game()
