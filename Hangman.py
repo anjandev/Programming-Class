@@ -56,6 +56,7 @@ def reveal_letter():
     
     global letters
     global guessed
+    global chances
     
     letter_guess = str(input("Player 2: Guess a letter."))
     
@@ -81,6 +82,14 @@ def reveal_letter():
     else:
         chances -= 1
         
+        if chances == 4:
+            print "\n\nNot in list! You have", chances, "chances left"
+        
+        elif chances > 0: 
+            print "\nNot in list! You have", chances, "chances left"
+            
+        
+        
     
     
 def play_game(): 
@@ -101,7 +110,6 @@ def play_game():
         
         reveal_letter()
     
-        print "\n"
         
         if letters == fullyguessed:
             print "\nPlayer 2 Wins!"
