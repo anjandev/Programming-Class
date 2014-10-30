@@ -5,7 +5,6 @@ import simplegui
 # Media
 soundlost = simplegui.load_sound('http://themushroomkingdom.net/sounds/wav/smb/smb_gameover.wav')
 soundwin = simplegui.load_sound('http://themushroomkingdom.net/sounds/wav/smb/smb_stage_clear.wav')
-soundwrongword = simplegui.load_sound('http://themushroomkingdom.net/sounds/wav/smb/smb_warning.wav')
 
 # Lists
 letters = []
@@ -20,6 +19,7 @@ chances = 6
 
 def draw_hang():
     # Drawing image. Currently not working inside gui
+    
     global chances
     
     if chances == 6:
@@ -103,11 +103,10 @@ def reveal_letter():
             
     else:
         chances -= 1
-        soundwrongword.play()
+        
         
         if chances > 0:
             print "\n\n", letter_guess, "is not in list! You have", chances, "chances left"
-            
             
 def play_game(): 
     # Main game function. Gets new words from player 1, hides the word, and asks for a guess and reveals the letter guessed. Keeps
