@@ -17,26 +17,6 @@ numwords = " "
 letter_guess = " "
 chances = 6
 
-def draw_hang():
-    # Drawing image. Currently not working inside gui
-    
-    global chances
-    
-    if chances == 6:
-        image = simplegui.load_image('http://i.imgur.com/lA2HT5B.png')
-    elif chances == 5:
-        image = simplegui.load_image('http://i.imgur.com/02Vq0IX.png')
-    elif chances == 4:
-        image = simplegui.load_image('http://i.imgur.com/MiX8ba6.png')
-    elif chances == 3:
-        image = simplegui.load_image('http://i.imgur.com/EII8fNV.png')
-    elif chances == 2:
-        image = simplegui.load_image('http://i.imgur.com/JxMC9QI.png')
-    elif chances == 1:
-        image = simplegui.load_image('http://i.imgur.com/rzxytiq.png')
-    else:
-        image = simplegui.load_image('http://i.imgur.com/Myb9nVM.png')
-
 
 def print_words():
     # Takes in a list of words and prints them on the same line
@@ -103,7 +83,6 @@ def reveal_letter():
             
     else:
         chances -= 1
-        
         
         if chances > 0:
             print "\n\n", letter_guess, "is not in list! You have", chances, "chances left"
