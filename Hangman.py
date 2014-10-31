@@ -19,6 +19,90 @@ letter_guess = " "
 chances = 6
 wordright = " "
 
+def draw_hang():
+    
+    global chances
+    
+    if chances == 6:
+        print "\n",
+        print """                     ______
+                    |	   
+                    |      
+                    |      
+                    |
+                    |
+                  __|_________
+                 |            |"""
+        
+    elif chances == 5:
+        print "\n",
+        print """                     ______
+                    |	   |
+                    |      O
+                    |      
+                    |
+                    |
+                  __|_________
+                 |            |"""
+        
+    elif chances == 4:
+        print "\n",
+        print """                     ______
+                    |	   |
+                    |      O
+                    |      |
+                    |
+                    |
+                  __|_________
+                 |            |"""
+        
+    elif chances == 3:
+        print "\n",
+        print """                     ______
+                    |	   |
+                    |      O
+                    |     \|
+                    |
+                    |
+                  __|_________
+                 |            |"""
+                
+    elif chances == 2:
+        print "\n",
+        print """                     ______
+                    |	   |
+                    |      O
+                    |     \|/
+                    |     
+                    |
+                  __|_________
+                 |            |"""
+
+                
+    elif chances == 1:
+        print "\n",
+        print """                     ______
+                    |	   |
+                    |      O
+                    |     \|/
+                    |      |
+                    |     /
+                    |
+                  __|_________
+                 |            |"""
+        
+    else:
+        print """                     ______
+                    |	   |
+                    |      O
+                    |     \|/
+                    |      |
+                    |     / \
+                    |
+                  __|_________
+                 |            |"""
+        
+
 
 def trash_talk():
     # Makes trash talk
@@ -26,25 +110,26 @@ def trash_talk():
     num = random.randint(0, 10)
     
     if num == 1:
-        print "REKT."
+        print "REKT.\n",
     elif num == 2:
-        print "Git g00d"
+        print "Git g00d\n",
     elif num == 3:
-        print "GG WP"
+        print "GG WP\n",
     elif num == 4:
-        print "Being this bad at hangman. LOL."
+        print "Being this bad at hangman. LOL.\n",
     elif num == 5:
-        print "Mad cause bad"
+        print "Mad cause bad\n",
     elif num == 6:
-        print "You have the mental agility of a bagel"
+        print "You have the mental agility of a bagel\n",
     elif num == 7:
-        print "EZ game"
+        print "EZ game\n",
     elif num == 8:
-        print "You suck."
+        print "You suck.\n",
     elif num == 9:
-        print "2 EZ"
+        print "2 EZ\n",
     elif num == 10:
-        print "You lost when you pressed play m8"
+        print "You lost when you pressed play m8\n",
+        
         
 def print_words():
     # Takes in a list of words and prints them on the same line
@@ -117,7 +202,7 @@ def reveal_letter():
         chances -= 1
         
         if chances > 0:
-            print "\n\n", letter_guess, "is not in list! You have", chances, "chances left"
+            print "\n\n", letter_guess, "is not in list! You have", chances, "chances left."
             
 def play_game(): 
     # Main game function. Gets new words from player 1, hides the word, and asks for a guess and reveals the letter guessed. Keeps
@@ -131,6 +216,7 @@ def play_game():
 
     while chances > 0:
         
+        draw_hang()
         reveal_letter()
         
         if wordright == 0:
@@ -143,8 +229,9 @@ def play_game():
             
             
     else: 
-        print "\n\n", letter_guess, "is not in list! Player 2 loses"
+        print "\n\n", letter_guess, "is not in list! Player 2 loses."
         soundlost.play()
+        draw_hang()
         
         
 play_game()
