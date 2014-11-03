@@ -24,7 +24,7 @@ def already_guessed():
     
     global alreadyguessed, letter_guess
     
-    letter_guess = str(input("Player 2: Guess a letter."))
+    letter_guess = str.lower(input("Player 2: Guess a letter."))
     
     if letter_guess in alreadyguessed:
         print "______________________________________________________________________________________________"
@@ -212,7 +212,7 @@ def reveal_letter():
         chances -= 1
         
         if chances > 0:
-            print "\n\n", letter_guess, "is not in list! You have", chances, "chances left."
+            print "\n\n", letter_guess, "is not in list! You have", chances, "chance(s) left."
             
 def play_game(): 
     # Main game function. Gets new words from player 1, hides the word, and asks for a guess and reveals the letter guessed. Keeps
@@ -230,7 +230,7 @@ def play_game():
         already_guessed() 
         reveal_letter()
         
-        if wordright == 0:
+        if wordright == 0 and chances > 0:
             trash_talk()
         
         if letters == fullyguessed:
@@ -241,6 +241,7 @@ def play_game():
             
     else: 
         print "\n\n", letter_guess, "is not in list! Player 2 loses."
+        trash_talk()
         soundlost.play()
         draw_hang()
         
