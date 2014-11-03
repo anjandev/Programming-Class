@@ -11,6 +11,7 @@ soundwin = simplegui.load_sound('http://themushroomkingdom.net/sounds/wav/smb/sm
 letters = []
 guessed = []
 fullyguessed = []
+alreadyguessed = []
 
 # Global Variables
 guessthis = " "
@@ -19,6 +20,22 @@ letter_guess = " "
 chances = 6
 wordright = " "
 
+def already_guessed():
+    
+    global alreadyguessed, letter_guess
+    
+    letter_guess = str(input("Player 2: Guess a letter."))
+    
+    if letter_guess in alreadyguessed:
+        print "______________________________________________________________________________________________"
+        print "\nYou have already guessed", letter_guess, ". Please enter a different letter"
+        already_guessed()
+    else:
+        print "______________________________________________________________________________________________"
+        print "\nYou guessed", letter_guess,", is it in the word(s)?",
+        alreadyguessed.append(letter_guess)
+    
+    
 def draw_hang():
     
     global chances
@@ -141,7 +158,7 @@ def new_words():
     numwords = int(input("Player 1: Enter the number of words you would like Player 2 to guess"))
     
     for s in range(numwords):
-        guessthis = str(input("Player 1: Enter a words you would like Player 2 to guess"))
+        guessthis = str.lower(input("Player 1: Enter a words you would like Player 2 to guess"))
         letters.extend(list(guessthis))
         letters.append(" ")
         
@@ -165,12 +182,12 @@ def reveal_letter():
     #Takes in a letter, checks whether the letter is in the word list and replaces the underscore in the hangman list by letter.
     
     global letters, guessed, chances, letter_guess, wordright
-    
-    letter_guess = str(input("Player 2: Guess a letter."))
-    
+        
     if letter_guess in letters:
         
         wordright = 1
+        
+        print "\nThe letter", letter_guess, "is in the word(s)!",
         
         # Allows porgram to repeatdly search for same letters if multiple of the same letters exist in a phrase. 
         for i in range(letters.count(letter_guess)):
@@ -208,8 +225,9 @@ def play_game():
     print_words()
 
     while chances > 0:
-        
+               
         draw_hang()
+        already_guessed() 
         reveal_letter()
         
         if wordright == 0:
