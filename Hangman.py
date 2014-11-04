@@ -1,42 +1,46 @@
-# Hangman game. 
+# Hangman game By Anjan Momi
 
 import simplegui
 import random
 
 # Media
-soundlost = simplegui.load_sound('http://themushroomkingdom.net/sounds/wav/smb/smb_gameover.wav')
-soundwin = simplegui.load_sound('http://themushroomkingdom.net/sounds/wav/smb/smb_stage_clear.wav')
+sound_lost = simplegui.load_sound('http://themushroomkingdom.net/sounds/wav/smb/smb_gameover.wav')
+sound_win = simplegui.load_sound('http://themushroomkingdom.net/sounds/wav/smb/smb_stage_clear.wav')
 
 # Lists
 letters = []
 guessed = []
-fullyguessed = []
-alreadyguessed = []
+fully_guessed = []
+guessed_letters = []
 
 # Global Variables
-guessthis = " "
-numwords = " "
+guess_this = " "
+num_words = " "
 letter_guess = " "
 chances = 6
-wordright = " "
+word_right = " "
+
 
 def already_guessed():
+    # Takes in a letter, Checks whether player 2 has already guessed that word and if he has it does not take away a chance but rather asks for another word.
     
-    global alreadyguessed, letter_guess
+    global guessed_letters, letter_guess
     
     letter_guess = str.lower(input("Player 2: Guess a letter."))
     
-    if letter_guess in alreadyguessed:
-        print "______________________________________________________________________________________________"
+    if letter_guess in guessed_letters:
+        print "_____________________________________________________________"
         print "\nYou have already guessed", letter_guess, ". Please enter a different letter"
         already_guessed()
+        
     else:
-        print "______________________________________________________________________________________________"
-        print "\nYou guessed", letter_guess,", is it in the word(s)?",
-        alreadyguessed.append(letter_guess)
+        print "_____________________________________________________________"
+        print "\nYou guessed", letter_guess,", is it in the phrase?",
+        guessed_letters.append(letter_guess)
     
     
 def draw_hang():
+    # Draws a hangman based on how many chances the player 2 has.
     
     global chances
     
@@ -113,30 +117,38 @@ def draw_hang():
                  |            |"""
         
 
-
 def trash_talk():
-    # Makes trash talk
+    # Makes trash talk if the player 2 gets a word wrong
      
     num = random.randint(0, 10)
     
     if num == 1:
         print "REKT.\n",
+        
     elif num == 2:
         print "Git g00d\n",
+        
     elif num == 3:
         print "GG WP\n",
+        
     elif num == 4:
         print "Being this bad at hangman. LOL.\n",
+        
     elif num == 5:
         print "Mad cause bad\n",
+        
     elif num == 6:
         print "You have the mental agility of a bagel\n",
+        
     elif num == 7:
         print "EZ game\n",
+        
     elif num == 8:
         print "You suck.\n",
+        
     elif num == 9:
         print "2 EZ\n",
+        
     elif num == 10:
         print "You lost when you pressed play m8\n",
         
@@ -153,45 +165,44 @@ def print_words():
 def new_words():
     # Asks the first player how many words they will input, then asks for each word and stores them to a list.  
     
-    global letters, fullyguessed, guessthis, numwords
+    global letters, guess_this, num_words
     
-    numwords = int(input("Player 1: Enter the number of words you would like Player 2 to guess"))
+    num_words = int(input("Player 1: Enter the number of words you would like Player 2 to guess"))
     
-    for s in range(numwords):
-        guessthis = str.lower(input("Player 1: Enter a words you would like Player 2 to guess"))
-        letters.extend(list(guessthis))
+    for s in range(num_words):
+        guess_this = str.lower(input("Player 1: Enter a words you would like Player 2 to guess"))
+        letters.extend(list(guess_this))
         letters.append(" ")
         
 
 def hide_words():
     # Takes in a list of words and makes a list of hangman chacters with all of the letters replaced by underscores
    
-    global guessed, fullyguessed, guessthis, numwords
+    global guessed, fully_guessed, guess_this, num_words
     
-    for s in range(numwords):
+    for s in range(num_words):
         
-        for i in range(len(guessthis)):
+        for i in range(len(guess_this)):
             guessed.append("_")
-            fullyguessed.append("_")
+            fully_guessed.append("_")
         
         guessed.append(" ")
-        fullyguessed.append(" ") 
+        fully_guessed.append(" ") 
 
 
 def reveal_letter():     
-    #Takes in a letter, checks whether the letter is in the word list and replaces the underscore in the hangman list by letter.
+    #Checks whether the letter is in the word list and replaces the underscore in the hangman list by letter.
     
-    global letters, guessed, chances, letter_guess, wordright
-        
+    global letters, guessed, chances, letter_guess, word_right
+         
     if letter_guess in letters:
+        # Tells the if statement after reveal_letter() in play_game() not to do any trashtalking
+        word_right = 1
         
-        wordright = 1
+        print "\nThe letter", letter_guess, "is in the phrase!",
         
-        print "\nThe letter", letter_guess, "is in the word(s)!",
-        
-        # Allows porgram to repeatdly search for same letters if multiple of the same letters exist in a phrase. 
+        # Allows porgram to repeatdly search for multiple instances of the same letter if multiple instances of the same letters exist in the phrase. 
         for i in range(letters.count(letter_guess)):
-            
             # Finds the place of the letter player 2 guessed in letters list 
             guessednum = letters.index(letter_guess)
             # Deletes the _ placeholder from guessed list and inserts the proper letter.
@@ -205,20 +216,22 @@ def reveal_letter():
         
         for i in range(len(guessed)):
             print guessed[i],
-            
+             
     else:
+        # Tells the if statement after reveal_letter() in play_game() to do trashtalking.
+        word_right = 0
         
-        wordright = 0
         chances -= 1
         
         if chances > 0:
-            print "\n\n", letter_guess, "is not in list! You have", chances, "chance(s) left."
+            print "\n", letter_guess, "is not in the phrase! You have", chances, "chance(s) left."
+           
             
 def play_game(): 
     # Main game function. Gets new words from player 1, hides the word, and asks for a guess and reveals the letter guessed. Keeps
     # keeps track of number of chances remaining and whether the game has been won or lost.
     
-    global chances, guessed, letters, fullyguessed, letter_guess, soundlost, soundwin, soundwrongword
+    global chances, guessed, letters, fully_guessed, letter_guess, sound_lost, sound_win
     
     new_words()
     hide_words()
@@ -230,19 +243,18 @@ def play_game():
         already_guessed() 
         reveal_letter()
         
-        if wordright == 0 and chances > 0:
+        if word_right == 0 and chances > 0:
             trash_talk()
         
-        if letters == fullyguessed:
+        if letters == fully_guessed:
             print "\nPlayer 2 Wins!"
-            soundwin.play()
+            sound_win.play()
             break
             
-            
     else: 
-        print "\n\n", letter_guess, "is not in list! Player 2 loses."
+        print "\n", letter_guess, "is not in the phrase! Player 2 loses."
         trash_talk()
-        soundlost.play()
+        sound_lost.play()
         draw_hang()
         
         
