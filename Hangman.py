@@ -12,6 +12,8 @@ letters = []
 guessed = []
 fully_guessed = []
 guessed_letters = []
+words = []
+phrase = []
 
 # Global Variables
 guess_this = " "
@@ -20,7 +22,17 @@ letter_guess = " "
 chances = 6
 word_right = " "
 
-
+def print_phrase():
+    # Prints the full phrase. Even though I coulda included this in the play_game function I did not do so in order to keep play_game function clean.
+    
+    global phrase
+    
+    print "\nThe phrase was",
+    
+    for x in range(len(phrase)):
+        print phrase[x],
+        
+        
 def already_guessed():
     # Takes in a letter, Checks whether player 2 has already guessed that word and if he has it does not take away a chance but rather asks for another word.
     
@@ -158,6 +170,8 @@ def print_words():
      
     global guessed
     
+    print "\n",
+    
     for i in range(len(guessed)):
         print guessed[i],                
     
@@ -165,7 +179,7 @@ def print_words():
 def new_words():
     # Asks the first player how many words they will input, then asks for each word and stores them to a list.  
     
-    global letters, guess_this, num_words
+    global letters, guess_this, num_words, phrase
     
     num_words = int(input("Player 1: Enter the number of words you would like Player 2 to guess"))
     
@@ -173,22 +187,25 @@ def new_words():
         guess_this = str.lower(input("Player 1: Enter a words you would like Player 2 to guess"))
         letters.extend(list(guess_this))
         letters.append(" ")
-        
+        words.append(guess_this)
+    
+    phrase = list(letters)
+    phrase.pop(len(phrase)-1)
 
+    
 def hide_words():
     # Takes in a list of words and makes a list of hangman chacters with all of the letters replaced by underscores
    
-    global guessed, fully_guessed, guess_this, num_words
+    global guessed, num_words, fully_guessed
     
     for s in range(num_words):
-        
-        for i in range(len(guess_this)):
+        numletters = len(words[s])
+        for s in range(numletters):
             guessed.append("_")
             fully_guessed.append("_")
-        
         guessed.append(" ")
-        fully_guessed.append(" ") 
-
+        fully_guessed.append(" ")
+        
 
 def reveal_letter():     
     #Checks whether the letter is in the word list and replaces the underscore in the hangman list by letter.
@@ -222,16 +239,16 @@ def reveal_letter():
         word_right = 0
         
         chances -= 1
-        
+        print_words()
         if chances > 0:
-            print "\n", letter_guess, "is not in the phrase! You have", chances, "chance(s) left."
+            print "\n", letter_guess, "is not in the phrase! \nYou have", chances, "chance(s) left."
            
             
 def play_game(): 
     # Main game function. Gets new words from player 1, hides the word, and asks for a guess and reveals the letter guessed. Keeps
     # keeps track of number of chances remaining and whether the game has been won or lost.
     
-    global chances, guessed, letters, fully_guessed, letter_guess, sound_lost, sound_win
+    global chances, letters, fully_guessed, letter_guess, sound_lost, sound_win
     
     new_words()
     hide_words()
@@ -247,15 +264,17 @@ def play_game():
             trash_talk()
         
         if letters == fully_guessed:
+            draw_hang()
             print "\nPlayer 2 Wins!"
             sound_win.play()
             break
             
     else: 
-        print "\n", letter_guess, "is not in the phrase! Player 2 loses."
+        print "\n", letter_guess, "is not in the phrase! \nPlayer 2 loses!"
         trash_talk()
         sound_lost.play()
         draw_hang()
+        print_phrase()
         
         
 play_game()
