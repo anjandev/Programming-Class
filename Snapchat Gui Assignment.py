@@ -2,6 +2,7 @@
 
 import simplegui
 
+
 # Load image
 image = simplegui.load_image('http://i.imgur.com/uzgmcO5.jpg')
 
@@ -22,21 +23,21 @@ newdot = []
 
 # Handler for clear button
 def clear_click():
+    global dots
+    
     dots = []
     
 # Handler for thickness input
 def thickness_handler(text_input):
     global thickness
-    
-    if len(text_input) > 0:
-        thickness = text_input
+    inp = int(text_input)
+    thickness = inp
     
 # Handler for color input
 def color_handler(text_input):
     global colour
-    
-    if len(text_input) > 0:
-        colour = text_input
+    inp = str(text_input)
+    colour = inp
     
 # Handler for mouse click
 def mouse_handler(position):
@@ -47,33 +48,30 @@ def mouse_handler(position):
     newdot.append(thickness)
     dots.append(newdot)
     newdot = []
-    
+
 # Handler to draw on canvas
 def draw(canvas):
     global dots
     
     canvas.draw_image(image, (WIDTH / 2, HEIGHT / 2), (WIDTH, HEIGHT), (50 * DRAWSCALE, 50 * DRAWSCALE), (100 * DRAWSCALE, 100 * DRAWSCALE))
-    
     for x in range(len(dots)):
         canvas.draw_circle( dots[x][0], dots[x][2], dots[x][2], dots[x][1], dots[x][1])
-
         
 # Create a frame 
 FRAMEWIDTHHEIGHT = 100 * DRAWSCALE
+TEXT_FIELD_LEN = 200
 
 frame = simplegui.create_frame('Testing', FRAMEWIDTHHEIGHT, FRAMEWIDTHHEIGHT)
+
+# Add buttons and inputs to frame
 frame.add_button("Clear", clear_click) 
-color_input = frame.add_input('colour', color_handler, FRAMEWIDTHHEIGHT) 
-thickness_input = frame.add_input('thickness', thickness_handler, FRAMEWIDTHHEIGHT) 
+frame.add_input('Colour', color_handler, TEXT_FIELD_LEN) 
+frame.add_input('Thickness', thickness_handler, TEXT_FIELD_LEN) 
+
+# Assign callbacks to event handlers
 frame.set_draw_handler(draw) 
 frame.set_mouseclick_handler(mouse_handler) 
 frame.set_mousedrag_handler(mouse_handler) #same for both click and drag in this case 
-
-#needs work
-
-# Add buttons and inputs to frame
-
-# Assign callbacks to event handlers
 
 # Start the frame animation
 frame.start()
