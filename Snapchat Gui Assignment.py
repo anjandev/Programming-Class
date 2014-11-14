@@ -50,17 +50,15 @@ def mouse_handler(position):
     
 # Handler to draw on canvas
 def draw(canvas):
-    global dots, thick, col
+    global dots
     
     canvas.draw_image(image, (WIDTH / 2, HEIGHT / 2), (WIDTH, HEIGHT), (50 * DRAWSCALE, 50 * DRAWSCALE), (100 * DRAWSCALE, 100 * DRAWSCALE))
     
-    print dots
-    print
-    
     for x in range(len(dots)):
-		    
-# Create a frame 
+        canvas.draw_circle( dots[x][0], dots[x][2], dots[x][2], dots[x][1], dots[x][1])
 
+        
+# Create a frame 
 FRAMEWIDTHHEIGHT = 100 * DRAWSCALE
 
 frame = simplegui.create_frame('Testing', FRAMEWIDTHHEIGHT, FRAMEWIDTHHEIGHT)
