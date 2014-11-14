@@ -26,23 +26,25 @@ def clear_click():
     
 # Handler for thickness input
 def thickness_handler(text_input):
-    global thickness, newdot, dots
+    global thickness
     
-    newdot.append(thickness)
+    if len(text_input) > 0:
+        thickness = text_input
     
 # Handler for color input
 def color_handler(text_input):
-    global colour, newdot, dots
+    global colour
     
-    text_input = colour
-    
-    newdot.append(colour)
+    if len(text_input) > 0:
+        colour = text_input
     
 # Handler for mouse click
 def mouse_handler(position):
     global newdot, colour, thickness, dots
     
     newdot.append(position)
+    newdot.append(colour)
+    newdot.append(thickness)
     dots.append(newdot)
     newdot = []
     
@@ -55,22 +57,21 @@ def draw(canvas):
     print dots
     print
     
-    #for x in range(len(dots)):
-        #canvas.draw_circle(dots[0], dots[1], dots[1], dots[2], dots[2])
-    
+    for x in range(len(dots)):
+		    
 # Create a frame 
 
 FRAMEWIDTHHEIGHT = 100 * DRAWSCALE
 
 frame = simplegui.create_frame('Testing', FRAMEWIDTHHEIGHT, FRAMEWIDTHHEIGHT)
 frame.add_button("Clear", clear_click) 
+color_input = frame.add_input('colour', color_handler, FRAMEWIDTHHEIGHT) 
+thickness_input = frame.add_input('thickness', thickness_handler, FRAMEWIDTHHEIGHT) 
 frame.set_draw_handler(draw) 
 frame.set_mouseclick_handler(mouse_handler) 
 frame.set_mousedrag_handler(mouse_handler) #same for both click and drag in this case 
 
 #needs work
-color_input = frame.add_input(colour, color_handler, FRAMEWIDTHHEIGHT) 
-thickness_input = frame.add_input(thickness, thickness_handler, FRAMEWIDTHHEIGHT) 
 
 # Add buttons and inputs to frame
 
