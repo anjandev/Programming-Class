@@ -1,4 +1,4 @@
-# Python program using classes.
+# Python program describing dogs using classes.
 
 class Dog:
     
@@ -13,15 +13,14 @@ class Dog:
     
     # Getters
     
-    def get_yappy(self):
+    def bark(self):
         for x in range(self.yappiness):
             print "Woof!"
     
 dog1 = Dog("Rudolph", 4, "golden", 3)
-dog2 = Dog("Charm", 7, "brown", 7)
-
 print dog1
-print dog2
+dog1.bark()
 
-dog = Dog()
-dog.
+dog2 = Dog("Charm", 7, "brown", 7)
+print dog2
+dog2.bark()
