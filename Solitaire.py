@@ -4,70 +4,73 @@ import simplegui
 import random
 
 
-def assign_loc(num, list):
+def assign_loc(numofcards, layer):
     global shuffled
     
-    for x in range(num):
-        list.append(shuffled[x])
-        shuffled.pop(x)
-
+    for x in range(numofcards):
+        layer.append(shuffled[x])
+        shuffled[x] = Card(layer, suit, rank, "no")
+        shuffled.pop(0)
+        
 # Classes
 class Card:
 
-    def __init__(self, varname, name, location, suit, value):
-        self.varname = varname
-        self.name = name
+    def __init__(self, location, suit, value, exposed):
         self.location = location
         self.suit = suit
         self.value = value
+        self.exposed = exposed
     
-    def picture(self):
-        self.image
-
+    def __str__(self):
+        return self.value + self.suit
+        
 # Global variables
-base_cards = ("King", "Queen", "Joker", "10", "9", "8", "7", "6", "5", "4", "3", "2", "Ace")
-suited = (" of Diamonds", " of Spades", " of Hearts", " of Clovers")
-cards = ()
-
-variables = []
-shuffled = []
-
+ranks = ("King", "Queen", "Joker", "10", "9", "8", "7", "6", "5", "4", "3", "2", "Ace")
+suits = (" of Diamonds", " of Spades", " of Hearts", " of Clovers")
 deck = []
 
-deck1 = []
-deck2 = []
-deck3 = []
-deck4 = []
-deck5 = []
-deck6 = []
-deck7 = []
+layer1 = []
+layer2 = []
+layer3 = []
+layer4 = []
+layer5 = []
+layer6 = []
+layer7 = []
 
 top1 = []
 top2 = []
 top3 = []
 top4 = []
 
-for x in range(52):
-    x = str(x)
-    variables.append("card" + x)
-
-for x in range(52):
-    shuffled.append(variables[x])
-
+for rank in ranks:
+    for suit in suits:
+        deck.append(rank + suit)
+        
+shuffled = deck
 random.shuffle(shuffled)
 
-# Clean this up with a for loop
-assign_loc(1, deck1)
-assign_loc(2, deck2)
-assign_loc(3, deck3)
-assign_loc(4, deck4)
-assign_loc(5, deck5)
-assign_loc(6, deck6)
-assign_loc(7, deck7)
 
-for x in range(52):
+for card in shuffled:
+    card = Card(shuffled, suit, rank, "no")
     
+print shuffled
 
+assign_loc(1, layer1)
+assign_loc(2, layer2)
+assign_loc(3, layer3)
+assign_loc(4, layer4)
+assign_loc(5, layer5)
+assign_loc(6, layer6)
+assign_loc(7, layer7)
+
+
+print layer1
+print layer2
+print layer3
+print layer4
+
+
+    
 
 
 # Helper Functions
