@@ -128,13 +128,20 @@ def shuffle():
 
     random.shuffle(shuffled)
     
-    
 # Event Handlers
+# Use a getter for this
+#image = simplegui.load_image('http://commondatastorage.googleapis.com/codeskulptor-assets/gutenberg.jpg')
+
+#def draw_handler(canvas):
+    #canvas.draw_image(image, (1521 / 2, 1818 / 2), (1521, 1818), (50, 50), (100, 100))
 
 # Make Frame
+frame = simplegui.create_frame('Solitaire', 1000, 850)
+frame.set_draw_handler(draw_handler)
+frame.set_canvas_background('Green')
 
 # Call Event Handlers
 
 # Start Frame and Timers
-
+frame.start()
 main()
