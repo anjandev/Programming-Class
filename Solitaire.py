@@ -18,8 +18,16 @@ class Card:
         self.unexposedimg = unexposedimg
     
     def __str__(self):
-        return self.value + " of " + self.suit + ". It's location is" + self.location + ". Exposed:" + self.exposed + "Exposed image is:" + self.exposedimg + " Cardnum:" + str(self.cardnum) + "unexposedimg:" + self.unexposedimg
+        return self.value + " of " + self.suit + ". It's location is" + self.location + ". Exposed:" + str(self.exposed) + "Exposed image is:" + self.exposedimg + " Cardnum:" + str(self.cardnum) + "unexposedimg:" + self.unexposedimg
+       
+    # Setters
+    
+    def set_location(self, location):
+        self.location = location
         
+    def exposed(self):
+        self.exposed = True
+   
 # Global variables
 ranks = ("King", "Queen", "Joker", "10", "9", "8", "7", "6", "5", "4", "3", "2", "Ace")
 suits = ("Diamonds", "Spades", "Hearts", "Clovers")
@@ -39,13 +47,15 @@ top2 = []
 top3 = []
 top4 = []
 
-# Where the rank starts in the deck
-diamonds = 0
-spades = 13
-hearts = 26
-clovers = 39
+# Where the rank starts in the deck. Made changes. May cause bugs.
+ranklen = 13
 
-# Link to a set's images. These might need quotes. Bugs
+diamondsstart = 0 * ranklen
+spadesstart = 1 * ranklen
+heartsstart = 2 * ranklen
+cloversstart = 3 * ranklen
+
+# Link to a set's images.
 diamondsimg = "http://i.imgur.com/rjCP3uF.png"
 spadesimg = "http://i.imgur.com/B0PojjI.png"
 heartsimg = "http://i.imgur.com/HfL7T9o.png"
@@ -58,29 +68,35 @@ def main():
     
     makedeck()
     
-    definecards(diamonds, "diamonds", diamondsimg)
-    definecards(spades, "spades", spadesimg)
-    definecards(hearts, "hearts", heartsimg)
-    definecards(clovers, "clovers", cloversimg)
+    definecards(diamondsstart, "diamonds", diamondsimg)
+    definecards(spadesstart, "spades", spadesimg)
+    definecards(heartsstart, "hearts", heartsimg)
+    definecards(cloversstart, "clovers", cloversimg)
     
     shuffle()
     
-    assign_loc(1, layer1)
-    assign_loc(2, layer2)
-    assign_loc(3, layer3)
-    assign_loc(4, layer4)
-    assign_loc(5, layer5)
-    assign_loc(6, layer6)
-    assign_loc(7, layer7)
+    assign_loc(1, layer1, "layer1")
+    assign_loc(2, layer2, "layer2")
+    assign_loc(3, layer3, "layer3")
+    assign_loc(4, layer4, "layer4")
+    assign_loc(5, layer5, "layer5")
+    assign_loc(6, layer6, "layer6")
+    assign_loc(7, layer7, "layer7")
     
-def assign_loc(numofcards, layer):
+    
+def assign_loc(numofcards, layer, name_of_layer):
     global shuffled
     
     for x in range(numofcards):
         layer.append(shuffled[x])
         # To-do change location of card that was appended
+        shuffled[x].set_location(name_of_layer)
         shuffled.pop(0)
-
+    
+    for x in range(len(layer)):
+        print layer[x]
+        
+        
 def makedeck():
     global ranks, suits, deck, shuffled
     
@@ -88,6 +104,7 @@ def makedeck():
         for rank in ranks:
             print rank + suit
             deck.append(rank + suit)
+           
             
 def definecards(deckstart, suit, setimg):
     global deck, ranks
@@ -100,7 +117,7 @@ def definecards(deckstart, suit, setimg):
     # IMAGE = simplegui.load_image(setimg)    
     
     for x in range(13):
-        deck[x + deckstart] = Card("shuffled", suit, ranks[x], "no", setimg, x, "http://i.imgur.com/7yg05Co.png")
+        deck[x + deckstart] = Card("shuffled", suit, ranks[x], False, setimg, x, "http://i.imgur.com/7yg05Co.png")
         
     
 def shuffle():
@@ -108,7 +125,7 @@ def shuffle():
     
     for card in deck:
         shuffled.append(card)
-        
+
     random.shuffle(shuffled)
     
     
