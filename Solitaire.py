@@ -3,14 +3,19 @@
 import simplegui
 import random
 
+# Link to sets http://imgur.com/dEoEdBG,rjCP3uF,HfL7T9o,B0PojjI
+
 # Classes
 class Card:
 
-    def __init__(self, location, suit, value, exposed):
+    def __init__(self, location, suit, value, exposed, exposedimg, region, unexposedimg):
         self.location = location
         self.suit = suit
         self.value = value
         self.exposed = exposed
+        self.exposedimg = exposedimg
+        self.region = region
+        self.unexposedimg = unexposedimg
     
     def __str__(self):
         return self.value + " of " + self.suit
@@ -34,13 +39,32 @@ top2 = []
 top3 = []
 top4 = []
 
+# Where the rank starts in the deck
+diamonds = 0
+spades = 13
+hearts = 26
+clovers = 39
+
+# Link to a set's images. These might need quotes. Bugs
+diamondsimg = "http://i.imgur.com/rjCP3uF.png"
+spadesimg = "http://i.imgur.com/B0PojjI.png"
+heartsimg = "http://i.imgur.com/HfL7T9o.png"
+cloversimg = "http://i.imgur.com/dEoEdBG.png"
 
 # Helper Functions
 def main():
-    global deck, shuffled
+    global deck, shuffled, diamonds, spades, hearts, clovers
+    global diamondsimg, spadesimg, heartsimg, cloversimg
     
     makedeck()
+    
+    definecards(diamonds, diamondsimg)
+    definecards(spades, spadesimg)
+    definecards(hearts, heartsimg)
+    definecards(clovers, cloversimg)
+    
     shuffle()
+    
     assign_loc(1, layer1)
     assign_loc(2, layer2)
     assign_loc(3, layer3)
@@ -61,13 +85,28 @@ def assign_loc(numofcards, layer):
 def makedeck():
     global ranks, suits, deck, shuffled
     
-    for rank in ranks:
-        for suit in suits:
+    for suit in suits:
+        for rank in ranks:
             print rank + suit
             deck.append(rank + suit)
-            # To-do Assign card images
-            deck[-1] = Card("shuffled", suit, rank, "no")
-
+            
+def definecards(rank, setimg):
+    global deck
+    # Width of a set's picture
+    imgwidth = 2179
+    # Width of one card. This might create a bug
+    cardwidth =  2179 / 13
+    
+    starting = 2179 - cardwidth
+    
+    # To-do Assign card images
+    #(self, location, suit, value, exposed, exposedimg, region, unexposedimg)
+    
+    for x in range(rank):
+        #deck[-1] = Card("shuffled", suit, rank, "no", )
+        print deck[x]
+        
+    
 def shuffle():
     global deck, shuffled
     
