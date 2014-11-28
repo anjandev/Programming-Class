@@ -8,17 +8,17 @@ import random
 # Classes
 class Card:
 
-    def __init__(self, location, suit, value, exposed, exposedimg, region, unexposedimg):
+    def __init__(self, location, suit, value, exposed, exposedimg, cardnum, unexposedimg):
         self.location = location
         self.suit = suit
         self.value = value
         self.exposed = exposed
         self.exposedimg = exposedimg
-        self.region = region
+        self.cardnum = cardnum
         self.unexposedimg = unexposedimg
     
     def __str__(self):
-        return self.value + " of " + self.suit
+        return self.value + " of " + self.suit + ". It's location is" + self.location + ". Exposed:" + self.exposed + "Exposed image is:" + self.exposedimg + " Cardnum:" + str(self.cardnum) + "unexposedimg:" + self.unexposedimg
         
 # Global variables
 ranks = ("King", "Queen", "Joker", "10", "9", "8", "7", "6", "5", "4", "3", "2", "Ace")
@@ -58,10 +58,10 @@ def main():
     
     makedeck()
     
-    definecards(diamonds, diamondsimg)
-    definecards(spades, spadesimg)
-    definecards(hearts, heartsimg)
-    definecards(clovers, cloversimg)
+    definecards(diamonds, "diamonds", diamondsimg)
+    definecards(spades, "spades", spadesimg)
+    definecards(hearts, "hearts", heartsimg)
+    definecards(clovers, "clovers", cloversimg)
     
     shuffle()
     
@@ -72,7 +72,6 @@ def main():
     assign_loc(5, layer5)
     assign_loc(6, layer6)
     assign_loc(7, layer7)
-    
     
 def assign_loc(numofcards, layer):
     global shuffled
@@ -90,21 +89,18 @@ def makedeck():
             print rank + suit
             deck.append(rank + suit)
             
-def definecards(rank, setimg):
-    global deck
+def definecards(deckstart, suit, setimg):
+    global deck, ranks
     # Width of a set's picture
     imgwidth = 2179
     # Width of one card. This might create a bug
-    cardwidth =  2179 / 13
+    CARDWIDTH = 167
+    CARDLENGTH = 243
+    DRAWSCALE = 1
+    # IMAGE = simplegui.load_image(setimg)    
     
-    starting = 2179 - cardwidth
-    
-    # To-do Assign card images
-    #(self, location, suit, value, exposed, exposedimg, region, unexposedimg)
-    
-    for x in range(rank):
-        #deck[-1] = Card("shuffled", suit, rank, "no", )
-        print deck[x]
+    for x in range(13):
+        deck[x + deckstart] = Card("shuffled", suit, ranks[x], "no", setimg, x, "http://i.imgur.com/7yg05Co.png")
         
     
 def shuffle():
