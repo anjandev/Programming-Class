@@ -18,14 +18,25 @@ class Card:
         self.unexposedimg = unexposedimg
     
     def __str__(self):
-        return self.value + " of " + self.suit + ". It's location is" + self.location + ". Exposed:" + str(self.exposed) + "Exposed image is:" + self.exposedimg + " Cardnum:" + str(self.cardnum) + "unexposedimg:" + self.unexposedimg
+        return self.value + " of " + self.suit + ". It's location is" + self.location + ". Exposed:" + str(self.exposed) + ". Exposed image is:" + self.exposedimg + " Cardnum:" + str(self.cardnum) + "unexposedimg:" + self.unexposedimg
        
+    # Getters
+    def get_exposed(self):
+        return self.exposed
+    
+    def get_exposedimg(self):
+        return self.exposedimg
+    
+    def get_cardnum(self):
+        return self.cardnum
+        
     # Setters
     
     def set_location(self, location):
         self.location = location
         
-    def exposed(self):
+    def set_exposed(self, exposed):
+        self.exposed = exposed
         
    
 # Global variables
@@ -65,6 +76,8 @@ cloversimg = "http://i.imgur.com/dEoEdBG.png"
 def main():
     global deck, shuffled, diamonds, spades, hearts, clovers
     global diamondsimg, spadesimg, heartsimg, cloversimg
+    global layer1, layer2, layer3, layer4, layer5, layer6
+    global layer7
     
     makedeck()
     
@@ -75,34 +88,39 @@ def main():
     
     shuffle()
     
+    
     assign_loc(1, layer1, "layer1")
+    layer1[-1].set_exposed(True)
     assign_loc(2, layer2, "layer2")
+    layer2[-1].set_exposed(True)
     assign_loc(3, layer3, "layer3")
+    layer3[-1].set_exposed(True)
     assign_loc(4, layer4, "layer4")
+    layer4[-1].set_exposed(True)
     assign_loc(5, layer5, "layer5")
+    layer5[-1].set_exposed(True)
     assign_loc(6, layer6, "layer6")
+    layer6[-1].set_exposed(True)
     assign_loc(7, layer7, "layer7")
+    layer7[-1].set_exposed(True)
     
     
 def assign_loc(numofcards, layer, name_of_layer):
-    global shuffled
+    global shuffled, Cards
     
     for x in range(numofcards):
-        layer.append(shuffled[x])
+        layer.append(shuffled[0])
         # To-do change location of card that was appended
-        shuffled[x].set_location(name_of_layer)
+        shuffled[0].set_location(name_of_layer)
         shuffled.pop(0)
-    
-    for x in range(len(layer)):
-        print layer[x]
-        
+
+
         
 def makedeck():
     global ranks, suits, deck, shuffled
     
     for suit in suits:
         for rank in ranks:
-            print rank + suit
             deck.append(rank + suit)
            
             
@@ -128,10 +146,9 @@ def shuffle():
 
     random.shuffle(shuffled)
 
-def drawlayer(layer, layernum, canvas):
     
+def drawlayer(layer, layernum, canvas):
     BACK = simplegui.load_image('http://i.imgur.com/p6hCw9U.png')
-
     
     for cards in range(len(layer)):
         BACKWIDTH = BACK.get_width()
@@ -140,22 +157,22 @@ def drawlayer(layer, layernum, canvas):
         LOC_BACK_X = 100 * layernum
         DRAWSCALE = 1.25
         DIST_FROM_LAST = 25
-
-        canvas.draw_image(BACK, (BACKWIDTH / 2, BACKHEIGHT / 2), 
+        if layer[cards].exposed == False:
+            canvas.draw_image(BACK, (BACKWIDTH / 2, BACKHEIGHT / 2), 
                      (BACKWIDTH, BACKHEIGHT), 
                      (LOC_BACK_X, LOC_BACK_Y + DIST_FROM_LAST * cards), 
                      (BACKWIDTH * DRAWSCALE, BACKHEIGHT * DRAWSCALE))
-
-    if layernum == 1:
-        layer[layernum - 1]
-    else:
-        layer[layernum]
-
+        else:
+            pass
+            
+        
+            
 # Event Handlers
 # Use a getter for this
 #image = simplegui.load_image('http://commondatastorage.googleapis.com/codeskulptor-assets/gutenberg.jpg')
 
 def draw_handler(canvas):
+    global layer1, layer2, layer3, layer4, layer5, layer6, layer7
     
     # Drawing Deck
     BACK = simplegui.load_image('http://i.imgur.com/p6hCw9U.png')
@@ -178,6 +195,8 @@ def draw_handler(canvas):
     drawlayer(layer6, 6, canvas)
     drawlayer(layer7, 7, canvas)
     
+    
+    
 # Make Frame
 frame = simplegui.create_frame('Solitaire', 1000, 850)
 frame.set_canvas_background('Green')
@@ -186,5 +205,5 @@ frame.set_draw_handler(draw_handler)
 # Call Event Handlers
 
 # Start Frame and Timers
-frame.start()
 main()
+frame.start()
