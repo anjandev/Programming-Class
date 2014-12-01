@@ -26,7 +26,7 @@ class Card:
         self.location = location
         
     def exposed(self):
-        self.exposed = True
+        
    
 # Global variables
 ranks = ("King", "Queen", "Joker", "10", "9", "8", "7", "6", "5", "4", "3", "2", "Ace")
@@ -127,18 +127,61 @@ def shuffle():
         shuffled.append(card)
 
     random.shuffle(shuffled)
+
+def drawlayer(layer, layernum, canvas):
     
+    BACK = simplegui.load_image('http://i.imgur.com/p6hCw9U.png')
+
+    
+    for cards in range(len(layer)):
+        BACKWIDTH = BACK.get_width()
+        BACKHEIGHT = BACK.get_height()
+        LOC_BACK_Y = 300
+        LOC_BACK_X = 100 * layernum
+        DRAWSCALE = 1.25
+        DIST_FROM_LAST = 25
+
+        canvas.draw_image(BACK, (BACKWIDTH / 2, BACKHEIGHT / 2), 
+                     (BACKWIDTH, BACKHEIGHT), 
+                     (LOC_BACK_X, LOC_BACK_Y + DIST_FROM_LAST * cards), 
+                     (BACKWIDTH * DRAWSCALE, BACKHEIGHT * DRAWSCALE))
+
+    if layernum == 1:
+        layer[layernum - 1]
+    else:
+        layer[layernum]
+
 # Event Handlers
 # Use a getter for this
 #image = simplegui.load_image('http://commondatastorage.googleapis.com/codeskulptor-assets/gutenberg.jpg')
 
-#def draw_handler(canvas):
-    #canvas.draw_image(image, (1521 / 2, 1818 / 2), (1521, 1818), (50, 50), (100, 100))
+def draw_handler(canvas):
+    
+    # Drawing Deck
+    BACK = simplegui.load_image('http://i.imgur.com/p6hCw9U.png')
+    BACKWIDTH = BACK.get_width()
+    BACKHEIGHT = BACK.get_height()
+    LOC_BACK_Y = 75
+    LOC_BACK_X = 100
+    DRAWSCALE = 1.25
 
+    canvas.draw_image(BACK, (BACKWIDTH / 2, BACKHEIGHT / 2), 
+                     (BACKWIDTH, BACKHEIGHT), 
+                     (LOC_BACK_X, LOC_BACK_Y), 
+                     (BACKWIDTH * DRAWSCALE, BACKHEIGHT * DRAWSCALE))
+    
+    drawlayer(layer1, 1, canvas)
+    drawlayer(layer2, 2, canvas)
+    drawlayer(layer3, 3, canvas)
+    drawlayer(layer4, 4, canvas)
+    drawlayer(layer5, 5, canvas)
+    drawlayer(layer6, 6, canvas)
+    drawlayer(layer7, 7, canvas)
+    
 # Make Frame
 frame = simplegui.create_frame('Solitaire', 1000, 850)
-frame.set_draw_handler(draw_handler)
 frame.set_canvas_background('Green')
+frame.set_draw_handler(draw_handler)
 
 # Call Event Handlers
 
