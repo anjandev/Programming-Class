@@ -4,21 +4,28 @@ import simplegui
 import random
 
 # Link to sets http://imgur.com/dEoEdBG,rjCP3uF,HfL7T9o,B0PojjI
+# Current bugs. Layer 2 draw repeats 4 times
+# Layer 3 draw repeats 9
+# My card width probably go off the end of the set.
+# Missing Cards: 6 of spades
+# 8 of spades
+# 2 of spades
+# Queen of spades
+# 5 of spades
 
 # Classes
 class Card:
 
-    def __init__(self, location, suit, value, exposed, exposedimg, cardnum, unexposedimg):
+    def __init__(self, location, suit, value, exposed, exposedimg, cardnum):
         self.location = location
         self.suit = suit
         self.value = value
         self.exposed = exposed
         self.exposedimg = exposedimg
         self.cardnum = cardnum
-        self.unexposedimg = unexposedimg
     
     def __str__(self):
-        return self.value + " of " + self.suit + ". It's location is" + self.location + ". Exposed:" + str(self.exposed) + ". Exposed image is:" + self.exposedimg + " Cardnum:" + str(self.cardnum) + "unexposedimg:" + self.unexposedimg
+        return self.value + " of " + self.suit + ". It's location is" + self.location + ". Exposed:" + str(self.exposed) + ". Exposed image is:" + str(self.exposedimg) + " Cardnum:" + str(self.cardnum)
        
     # Getters
     def get_exposed(self):
@@ -40,7 +47,7 @@ class Card:
         
    
 # Global variables
-ranks = ("King", "Queen", "Joker", "10", "9", "8", "7", "6", "5", "4", "3", "2", "Ace")
+ranks = ("Ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Joker", "Queen", "King")
 suits = ("Diamonds", "Spades", "Hearts", "Clovers")
 deck = []
 shuffled = []
@@ -59,50 +66,61 @@ top3 = []
 top4 = []
 
 # Where the rank starts in the deck. Made changes. May cause bugs.
-ranklen = 13
-
-diamondsstart = 0 * ranklen
-spadesstart = 1 * ranklen
-heartsstart = 2 * ranklen
-cloversstart = 3 * ranklen
-
-# Link to a set's images.
-diamondsimg = "http://i.imgur.com/rjCP3uF.png"
-spadesimg = "http://i.imgur.com/B0PojjI.png"
-heartsimg = "http://i.imgur.com/HfL7T9o.png"
-cloversimg = "http://i.imgur.com/dEoEdBG.png"
 
 # Helper Functions
 def main():
     global deck, shuffled, diamonds, spades, hearts, clovers
-    global diamondsimg, spadesimg, heartsimg, cloversimg
     global layer1, layer2, layer3, layer4, layer5, layer6
     global layer7
     
     makedeck()
     
-    definecards(diamondsstart, "diamonds", diamondsimg)
-    definecards(spadesstart, "spades", spadesimg)
-    definecards(heartsstart, "hearts", heartsimg)
-    definecards(cloversstart, "clovers", cloversimg)
+    ranklen = 13
+    diamondsstart = 0 * ranklen
+    spadesstart = 1 * ranklen
+    heartsstart = 2 * ranklen
+    cloversstart = 3 * ranklen
+    
+    diamondsimg = simplegui.load_image("http://i.imgur.com/rjCP3uF.png")
+    spadesimg = simplegui.load_image("http://i.imgur.com/2FNx1am.png")
+    while spadesimg.get_width() == 0:
+        print "NOT WORKING"
+    heartsimg = simplegui.load_image("http://i.imgur.com/HfL7T9o.png")
+    cloversimg = simplegui.load_image("http://i.imgur.com/dEoEdBG.png")
+    
+    definecards(diamondsstart, 'Diamonds', diamondsimg)
+    definecards(spadesstart, 'Spades', spadesimg)
+    definecards(heartsstart, 'Hearts', heartsimg)
+    definecards(cloversstart, 'Clovers', cloversimg)
     
     shuffle()
     
-    
     assign_loc(1, layer1, "layer1")
     layer1[-1].set_exposed(True)
+    print "LAYER1"
+    for x in range(len(layer1)):
+        print layer1[x]
     assign_loc(2, layer2, "layer2")
     layer2[-1].set_exposed(True)
+    print "LAYER2"
+    for x in range(len(layer2)):
+        print layer2[x]
     assign_loc(3, layer3, "layer3")
     layer3[-1].set_exposed(True)
     assign_loc(4, layer4, "layer4")
     layer4[-1].set_exposed(True)
     assign_loc(5, layer5, "layer5")
     layer5[-1].set_exposed(True)
+    print "LAYER5"
+    for x in range(len(layer2)):
+        print layer5[x]
     assign_loc(6, layer6, "layer6")
     layer6[-1].set_exposed(True)
     assign_loc(7, layer7, "layer7")
     layer7[-1].set_exposed(True)
+    print "LAYER7"
+    for x in range(len(layer7)):
+        print layer7[x]
     
     
 def assign_loc(numofcards, layer, name_of_layer):
@@ -114,8 +132,7 @@ def assign_loc(numofcards, layer, name_of_layer):
         shuffled[0].set_location(name_of_layer)
         shuffled.pop(0)
 
-
-        
+      
 def makedeck():
     global ranks, suits, deck, shuffled
     
@@ -126,18 +143,15 @@ def makedeck():
             
 def definecards(deckstart, suit, setimg):
     global deck, ranks
-    # Width of a set's picture
-    imgwidth = 2179
-    # Width of one card. This might create a bug
-    CARDWIDTH = 167
-    CARDLENGTH = 243
-    DRAWSCALE = 1
-    # IMAGE = simplegui.load_image(setimg)    
+
+    print suit
     
     for x in range(13):
-        deck[x + deckstart] = Card("shuffled", suit, ranks[x], False, setimg, x, "http://i.imgur.com/7yg05Co.png")
+        print deck[x + deckstart]
+        print [x + deckstart]
+        deck[x + deckstart] = Card("shuffled", suit, ranks[x], False, setimg, x)
+
         
-    
 def shuffle():
     global deck, shuffled
     
@@ -157,16 +171,26 @@ def drawlayer(layer, layernum, canvas):
         LOC_BACK_X = 100 * layernum
         DRAWSCALE = 1.25
         DIST_FROM_LAST = 25
+        
         if layer[cards].exposed == False:
             canvas.draw_image(BACK, (BACKWIDTH / 2, BACKHEIGHT / 2), 
                      (BACKWIDTH, BACKHEIGHT), 
                      (LOC_BACK_X, LOC_BACK_Y + DIST_FROM_LAST * cards), 
                      (BACKWIDTH * DRAWSCALE, BACKHEIGHT * DRAWSCALE))
         else:
-            pass
+            # Width of one card. This might create a bug
+            CARDWIDTH = 167
+            CARDHEIGHT = 243
+            SET = layer[cards].exposedimg
+            CARD_SPOT_IN_SETIMG = layer[cards].cardnum
             
-        
+            canvas.draw_image(SET, (CARDWIDTH / 2 + CARDWIDTH * CARD_SPOT_IN_SETIMG, CARDHEIGHT / 2), 
+                     (CARDWIDTH, CARDHEIGHT), 
+                     (LOC_BACK_X, LOC_BACK_Y + DIST_FROM_LAST * cards), 
+                     (BACKWIDTH * DRAWSCALE, BACKHEIGHT * DRAWSCALE))
             
+            
+     
 # Event Handlers
 # Use a getter for this
 #image = simplegui.load_image('http://commondatastorage.googleapis.com/codeskulptor-assets/gutenberg.jpg')
@@ -195,8 +219,6 @@ def draw_handler(canvas):
     drawlayer(layer6, 6, canvas)
     drawlayer(layer7, 7, canvas)
     
-    
-    
 # Make Frame
 frame = simplegui.create_frame('Solitaire', 1000, 850)
 frame.set_canvas_background('Green')
@@ -206,4 +228,5 @@ frame.set_draw_handler(draw_handler)
 
 # Start Frame and Timers
 main()
+
 frame.start()
