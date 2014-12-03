@@ -3,6 +3,16 @@
 import simplegui
 import random
 
+# Link to sets http://imgur.com/dEoEdBG,rjCP3uF,HfL7T9o,B0PojjI
+# Current bugs. Layer 2 draw repeats 4 times
+# Layer 3 draw repeats 9
+# My card width probably go off the end of the set.
+# Missing Cards: 6 of spades
+# 8 of spades
+# 2 of spades
+# Queen of spades
+# 5 of spades
+
 # Classes
 class Card:
 
@@ -55,6 +65,11 @@ top2 = []
 top3 = []
 top4 = []
 
+# How many times the player has clicked the deck. So that 
+# the same 3 cards everytime together when they click the
+# deck unless they move something out the deck.
+timesdecked = 0
+
 # Where the rank starts in the deck. Made changes. May cause bugs.
 
 # Helper Functions
@@ -74,15 +89,12 @@ def main():
     spadesimg = simplegui.load_image("http://i.imgur.com/soZWEII.png")
     while spadesimg.get_width() == 0:
         print "LOADING SPADES"
-        
     diamondsimg = simplegui.load_image("http://i.imgur.com/rjCP3uF.png")
     while diamondsimg.get_width() == 0:
         print "LOADING DIAMONDS"
-        
     heartsimg = simplegui.load_image("http://i.imgur.com/HfL7T9o.png")
     while heartsimg.get_width() == 0:
         print "LOADING HEARTS"
-        
     cloversimg = simplegui.load_image("http://i.imgur.com/dEoEdBG.png")
     while cloversimg.get_width() == 0:
         print "LOADING CLOVERS"    
@@ -127,6 +139,7 @@ def makedeck():
         for rank in ranks:
             deck.append(rank + suit)
            
+            
 def definecards(deckstart, suit, setimg):
     global deck, ranks
 
@@ -175,9 +188,15 @@ def drawlayer(layer, layernum, canvas):
                      (LOC_BACK_X, LOC_BACK_Y + DIST_FROM_LAST * cards), 
                      (BACKWIDTH * DRAWSCALE, BACKHEIGHT * DRAWSCALE))
             
+def draw_new_set_from_deck(canvas):
+    global shuffled
+    for cards in shuffled:
+    pass
+    
             
 # Event Handlers
 # Use a getter for this
+#image = simplegui.load_image('http://commondatastorage.googleapis.com/codeskulptor-assets/gutenberg.jpg')
 
 def draw_handler(canvas):
     global layer1, layer2, layer3, layer4, layer5, layer6, layer7
@@ -203,10 +222,31 @@ def draw_handler(canvas):
     drawlayer(layer6, 6, canvas)
     drawlayer(layer7, 7, canvas)
     
+def mouse_handler(position):
+    x = position[0]
+    y = position[1]
+    
+    TOPLEFTDECK_Y = 19
+    TOPLEFTDECK_X = 59
+    
+    BOTTOMRIGHTDECK_Y = 131
+    BOTTOMRIGHTDECK_X = 143
+    
+    # Check if player click on deck
+    if BOTTOMRIGHTDECK_X > x > TOPLEFTDECK_X:
+        if BOTTOMRIGHTDECK_Y > y > TOPLEFTDECK_Y:
+            pass
+        else:
+            pass
+    else:
+        pass
+    
+    
 # Make Frame
 frame = simplegui.create_frame('Solitaire', 1000, 850)
 frame.set_canvas_background('Green')
 frame.set_draw_handler(draw_handler)
+frame.set_mouseclick_handler(mouse_handler)
 
 # Call Event Handlers
 
