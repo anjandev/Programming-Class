@@ -3,16 +3,6 @@
 import simplegui
 import random
 
-# Link to sets http://imgur.com/dEoEdBG,rjCP3uF,HfL7T9o,B0PojjI
-# Current bugs. Layer 2 draw repeats 4 times
-# Layer 3 draw repeats 9
-# My card width probably go off the end of the set.
-# Missing Cards: 6 of spades
-# 8 of spades
-# 2 of spades
-# Queen of spades
-# 5 of spades
-
 # Classes
 class Card:
 
@@ -81,13 +71,22 @@ def main():
     heartsstart = 2 * ranklen
     cloversstart = 3 * ranklen
     
-    diamondsimg = simplegui.load_image("http://i.imgur.com/rjCP3uF.png")
-    spadesimg = simplegui.load_image("http://i.imgur.com/2FNx1am.png")
+    spadesimg = simplegui.load_image("http://i.imgur.com/soZWEII.png")
     while spadesimg.get_width() == 0:
-        print "NOT WORKING"
+        print "LOADING SPADES"
+        
+    diamondsimg = simplegui.load_image("http://i.imgur.com/rjCP3uF.png")
+    while diamondsimg.get_width() == 0:
+        print "LOADING DIAMONDS"
+        
     heartsimg = simplegui.load_image("http://i.imgur.com/HfL7T9o.png")
+    while heartsimg.get_width() == 0:
+        print "LOADING HEARTS"
+        
     cloversimg = simplegui.load_image("http://i.imgur.com/dEoEdBG.png")
-    
+    while cloversimg.get_width() == 0:
+        print "LOADING CLOVERS"    
+
     definecards(diamondsstart, 'Diamonds', diamondsimg)
     definecards(spadesstart, 'Spades', spadesimg)
     definecards(heartsstart, 'Hearts', heartsimg)
@@ -97,30 +96,18 @@ def main():
     
     assign_loc(1, layer1, "layer1")
     layer1[-1].set_exposed(True)
-    print "LAYER1"
-    for x in range(len(layer1)):
-        print layer1[x]
     assign_loc(2, layer2, "layer2")
     layer2[-1].set_exposed(True)
-    print "LAYER2"
-    for x in range(len(layer2)):
-        print layer2[x]
     assign_loc(3, layer3, "layer3")
     layer3[-1].set_exposed(True)
     assign_loc(4, layer4, "layer4")
     layer4[-1].set_exposed(True)
     assign_loc(5, layer5, "layer5")
     layer5[-1].set_exposed(True)
-    print "LAYER5"
-    for x in range(len(layer2)):
-        print layer5[x]
     assign_loc(6, layer6, "layer6")
     layer6[-1].set_exposed(True)
     assign_loc(7, layer7, "layer7")
     layer7[-1].set_exposed(True)
-    print "LAYER7"
-    for x in range(len(layer7)):
-        print layer7[x]
     
     
 def assign_loc(numofcards, layer, name_of_layer):
@@ -140,7 +127,6 @@ def makedeck():
         for rank in ranks:
             deck.append(rank + suit)
            
-            
 def definecards(deckstart, suit, setimg):
     global deck, ranks
 
@@ -190,10 +176,8 @@ def drawlayer(layer, layernum, canvas):
                      (BACKWIDTH * DRAWSCALE, BACKHEIGHT * DRAWSCALE))
             
             
-     
 # Event Handlers
 # Use a getter for this
-#image = simplegui.load_image('http://commondatastorage.googleapis.com/codeskulptor-assets/gutenberg.jpg')
 
 def draw_handler(canvas):
     global layer1, layer2, layer3, layer4, layer5, layer6, layer7
