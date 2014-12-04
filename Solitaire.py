@@ -70,13 +70,19 @@ top4 = []
 # deck unless they move something out the deck.
 timesdecked = 0
 
+spadesimg = simplegui.load_image("http://i.imgur.com/soZWEII.png")
+diamondsimg = simplegui.load_image("http://i.imgur.com/rjCP3uF.png")
+heartsimg = simplegui.load_image("http://i.imgur.com/HfL7T9o.png")
+cloversimg = simplegui.load_image("http://i.imgur.com/dEoEdBG.png")
+
+
 # Where the rank starts in the deck. Made changes. May cause bugs.
 
 # Helper Functions
 def main():
     global deck, shuffled, diamonds, spades, hearts, clovers
     global layer1, layer2, layer3, layer4, layer5, layer6
-    global layer7
+    global layer7, spadesimg, diamondsimg, heartsimg, cloversimg
     
     makedeck()
     
@@ -86,18 +92,6 @@ def main():
     heartsstart = 2 * ranklen
     cloversstart = 3 * ranklen
     
-    spadesimg = simplegui.load_image("http://i.imgur.com/soZWEII.png")
-    while spadesimg.get_width() == 0:
-        print "LOADING SPADES"
-    diamondsimg = simplegui.load_image("http://i.imgur.com/rjCP3uF.png")
-    while diamondsimg.get_width() == 0:
-        print "LOADING DIAMONDS"
-    heartsimg = simplegui.load_image("http://i.imgur.com/HfL7T9o.png")
-    while heartsimg.get_width() == 0:
-        print "LOADING HEARTS"
-    cloversimg = simplegui.load_image("http://i.imgur.com/dEoEdBG.png")
-    while cloversimg.get_width() == 0:
-        print "LOADING CLOVERS"    
 
     definecards(diamondsstart, 'Diamonds', diamondsimg)
     definecards(spadesstart, 'Spades', spadesimg)
@@ -191,7 +185,7 @@ def drawlayer(layer, layernum, canvas):
 def draw_new_set_from_deck(canvas):
     global shuffled
     for cards in shuffled:
-    pass
+        pass
     
             
 # Event Handlers
