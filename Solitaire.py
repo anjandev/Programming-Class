@@ -36,6 +36,27 @@ class Card:
     
     def get_cardnum(self):
         return self.cardnum
+    
+    def get_cardfront(self, canvas, side, LOC_BACK_X, LOC_BACK_Y):
+        
+        CARDWIDTH = 167
+        CARDHEIGHT = 243
+        CARD_SPOT_IN_SETIMG = self.cardnum
+        DRAWSCALE = 0.5
+        
+        if side == "front":
+            SET = self.exposedimg
+            # TODO make this work if back is selected (change pic to back)
+        elif side == "back":
+            SET = simplegui.load_image('http://i.imgur.com/p6hCw9U.png')
+            CARDWIDTH = SET.get_width()
+            CARDHEIGHT = SET.get_height()
+            DRAWSCALE = 1.2
+            
+        return canvas.draw_image(SET, (CARDWIDTH / 2 + CARDWIDTH * CARD_SPOT_IN_SETIMG, CARDHEIGHT / 2), 
+                     (CARDWIDTH, CARDHEIGHT), 
+                     (LOC_BACK_X, LOC_BACK_Y), 
+                     (CARDWIDTH * DRAWSCALE, CARDHEIGHT * DRAWSCALE))
         
     # Setters
     
@@ -64,6 +85,14 @@ top1 = []
 top2 = []
 top3 = []
 top4 = []
+
+location_in_deck = 0 
+
+x1 = 0
+x2 = 0 
+y1 = 0
+y2 = 0
+clicknum = 0
 
 # How many times the player has clicked the deck. So that 
 # the same 3 cards everytime together when they click the
@@ -115,6 +144,8 @@ def main():
     assign_loc(7, layer7, "layer7")
     layer7[-1].set_exposed(True)
     
+    print deck[0]
+    
     
 def assign_loc(numofcards, layer, name_of_layer):
     global shuffled, Cards
@@ -155,21 +186,23 @@ def shuffle():
 
     
 def drawlayer(layer, layernum, canvas):
-    BACK = simplegui.load_image('http://i.imgur.com/p6hCw9U.png')
     
     for cards in range(len(layer)):
+        BACK = simplegui.load_image('http://i.imgur.com/p6hCw9U.png')
         BACKWIDTH = BACK.get_width()
         BACKHEIGHT = BACK.get_height()
         LOC_BACK_Y = 300
         LOC_BACK_X = 100 * layernum
         DRAWSCALE = 1.25
         DIST_FROM_LAST = 25
+        LOC_BACK_Y = LOC_BACK_Y + DIST_FROM_LAST * cards
         
         if layer[cards].exposed == False:
-            canvas.draw_image(BACK, (BACKWIDTH / 2, BACKHEIGHT / 2), 
-                     (BACKWIDTH, BACKHEIGHT), 
-                     (LOC_BACK_X, LOC_BACK_Y + DIST_FROM_LAST * cards), 
-                     (BACKWIDTH * DRAWSCALE, BACKHEIGHT * DRAWSCALE))
+            # Because the back for all cards is the same, I can use any 
+            # card from my list of cards(the deck) to draw the back.
+            # Thats why I chose deck[0]. It's completely abritrary.
+            deck[0].get_cardfront(canvas, "back", LOC_BACK_X, LOC_BACK_Y)
+            
         else:
             # Width of one card. This might create a bug
             CARDWIDTH = 167
@@ -177,36 +210,67 @@ def drawlayer(layer, layernum, canvas):
             SET = layer[cards].exposedimg
             CARD_SPOT_IN_SETIMG = layer[cards].cardnum
             
-            canvas.draw_image(SET, (CARDWIDTH / 2 + CARDWIDTH * CARD_SPOT_IN_SETIMG, CARDHEIGHT / 2), 
-                     (CARDWIDTH, CARDHEIGHT), 
-                     (LOC_BACK_X, LOC_BACK_Y + DIST_FROM_LAST * cards), 
-                     (BACKWIDTH * DRAWSCALE, BACKHEIGHT * DRAWSCALE))
+            layer[cards].get_cardfront(canvas, "front", LOC_BACK_X, LOC_BACK_Y)
+            
             
 def draw_new_set_from_deck(canvas):
-    global shuffled
-    for cards in shuffled:
-        pass
+    global shuffled, location_in_deck, x1, x2, y1, y2, clicknum
     
+    TOPLEFTDECK_Y = 19
+    TOPLEFTDECK_X = 59
+    
+    BOTTOMRIGHTDECK_Y = 131
+    BOTTOMRIGHTDECK_X = 143
+    
+    LOC_BACK_Y = 75
+    LOC_BACK_X = 100 
+    
+    if clicknum == 1:
+        x = x1
+        y = y1
+    else:
+        x = x2
+        y = y2
+    
+    # Check if player has clicked on the deck
+    if BOTTOMRIGHTDECK_X > x > TOPLEFTDECK_X:
+        if BOTTOMRIGHTDECK_Y > y > TOPLEFTDECK_Y:
+            clicknum == 1
+            x2 = 60
+            y2 = 20
             
+            location_in_deck += 3
+            
+            cards_shown = []
+            
+            num_of_cards = len(shuffled)
+            
+            if location_in_deck == num_of_cards:
+                location_in_deck = 0
+            else:
+                for x in range(3):
+                    cards_shown.append(shuffled[x + location_in_deck])
+            
+                for card in range(3):
+                    LOC_BACK_X += 85
+                    cards_shown[card].get_cardfront(canvas, "front", LOC_BACK_X, LOC_BACK_Y)
+
+        else:
+            pass
+    else:
+        pass    
+
+
 # Event Handlers
-# Use a getter for this
-#image = simplegui.load_image('http://commondatastorage.googleapis.com/codeskulptor-assets/gutenberg.jpg')
 
 def draw_handler(canvas):
-    global layer1, layer2, layer3, layer4, layer5, layer6, layer7
+    global layer1, layer2, layer3, layer4, layer5, layer6, layer7 
+    global DRAWSCALE, deck
     
     # Drawing Deck
-    BACK = simplegui.load_image('http://i.imgur.com/p6hCw9U.png')
-    BACKWIDTH = BACK.get_width()
-    BACKHEIGHT = BACK.get_height()
     LOC_BACK_Y = 75
     LOC_BACK_X = 100
-    DRAWSCALE = 1.25
-
-    canvas.draw_image(BACK, (BACKWIDTH / 2, BACKHEIGHT / 2), 
-                     (BACKWIDTH, BACKHEIGHT), 
-                     (LOC_BACK_X, LOC_BACK_Y), 
-                     (BACKWIDTH * DRAWSCALE, BACKHEIGHT * DRAWSCALE))
+    deck[0].get_cardfront(canvas, "back", LOC_BACK_X, LOC_BACK_Y)
     
     drawlayer(layer1, 1, canvas)
     drawlayer(layer2, 2, canvas)
@@ -216,35 +280,34 @@ def draw_handler(canvas):
     drawlayer(layer6, 6, canvas)
     drawlayer(layer7, 7, canvas)
     
+    draw_new_set_from_deck(canvas)
+    
+    
 def mouse_handler(position):
-    x = position[0]
-    y = position[1]
+    global x1, x2, y1, y2, clicknum
+
+    # To play need to select a card and then click on what you
+    # where you want to put it. This allows us to keep track
+    # of what was selected (x1/y1) and where it was put(x2/y2).
     
-    TOPLEFTDECK_Y = 19
-    TOPLEFTDECK_X = 59
-    
-    BOTTOMRIGHTDECK_Y = 131
-    BOTTOMRIGHTDECK_X = 143
-    
-    # Check if player click on deck
-    if BOTTOMRIGHTDECK_X > x > TOPLEFTDECK_X:
-        if BOTTOMRIGHTDECK_Y > y > TOPLEFTDECK_Y:
-            pass
-        else:
-            pass
-    else:
-        pass
-    
-    
+    if clicknum == 0:
+        x1 = position[0]
+        y1 = position[1]
+        clicknum = 1
+    elif clicknum == 1:
+        x2 = position[0]
+        y2 = position[1]
+        clicknum = 0
+        
+
 # Make Frame
 frame = simplegui.create_frame('Solitaire', 1000, 850)
 frame.set_canvas_background('Green')
+
+# Call Event Handlers
 frame.set_draw_handler(draw_handler)
 frame.set_mouseclick_handler(mouse_handler)
 
-# Call Event Handlers
-
 # Start Frame and Timers
 main()
-
 frame.start()
