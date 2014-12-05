@@ -16,17 +16,20 @@ import random
 # Classes
 class Card:
 
-    def __init__(self, location, suit, value, exposed, exposedimg, cardnum):
+    def __init__(self, location, suit, value, exposed, exposedimg, cardnum, LOC_BACK_X, LOC_BACK_Y):
         self.location = location
         self.suit = suit
         self.value = value
         self.exposed = exposed
         self.exposedimg = exposedimg
         self.cardnum = cardnum
+        self.LOC_BACK_X = LOC_BACK_X
+        self.LOC_BACK_Y = LOC_BACK_Y
     
     def __str__(self):
-        return self.value + " of " + self.suit + ". It's location is" + self.location + ". Exposed:" + str(self.exposed) + ". Exposed image is:" + str(self.exposedimg) + " Cardnum:" + str(self.cardnum)
-       
+        return self.value + " of " + self.suit + ". It's location is" + self.location + ". Exposed:" + str(self.exposed) + ". Exposed image is:" + str(self.exposedimg) + " Cardnum:" + str(self.cardnum) + " X:" + LOC_BACK_X + " Y:" + LOC_BACK_Y
+        
+    
     # Getters
     def get_exposed(self):
         return self.exposed
@@ -37,17 +40,19 @@ class Card:
     def get_cardnum(self):
         return self.cardnum
     
-    def get_cardfront(self, canvas, side, LOC_BACK_X, LOC_BACK_Y):
+    def get_cardfront(self, canvas, LOC_BACK_X, LOC_BACK_Y):
         
         CARDWIDTH = 167
         CARDHEIGHT = 243
-        CARD_SPOT_IN_SETIMG = self.cardnum
         DRAWSCALE = 0.5
         
-        if side == "front":
+        CARD_SPOT_IN_SETIMG = self.cardnum
+        exposed = self.exposed		
+        
+        if exposed == True:
             SET = self.exposedimg
             # TODO make this work if back is selected (change pic to back)
-        elif side == "back":
+        elif exposed == False:
             SET = simplegui.load_image('http://i.imgur.com/p6hCw9U.png')
             CARDWIDTH = SET.get_width()
             CARDHEIGHT = SET.get_height()
@@ -57,7 +62,8 @@ class Card:
                      (CARDWIDTH, CARDHEIGHT), 
                      (LOC_BACK_X, LOC_BACK_Y), 
                      (CARDWIDTH * DRAWSCALE, CARDHEIGHT * DRAWSCALE))
-        
+    
+    
     # Setters
     
     def set_location(self, location):
@@ -65,7 +71,7 @@ class Card:
         
     def set_exposed(self, exposed):
         self.exposed = exposed
-        
+
    
 # Global variables
 ranks = ("Ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Joker", "Queen", "King")
@@ -95,6 +101,19 @@ x2 = 0
 y1 = 0
 y2 = 0
 clicknum = 0
+
+deckcard1 = 0
+deckcard2 = 0
+deckcard3 = 0
+
+layercard1 = 0
+layercard2 = 0
+layercard3 = 0
+layercard4 = 0
+layercard5 = 0
+layercard6 = 0
+layercard7 = 0
+
 
 # How many times the player has clicked the deck. So that 
 # the same 3 cards everytime together when they click the
@@ -146,8 +165,6 @@ def main():
     assign_loc(7, layer7, "layer7")
     layer7[-1].set_exposed(True)
     
-    print deck[0]
-    
     
 def assign_loc(numofcards, layer, name_of_layer):
     global shuffled, Cards
@@ -169,21 +186,16 @@ def makedeck():
             
 def definecards(deckstart, suit, setimg):
     global deck, ranks
-
-    print suit
-    
+   
     for x in range(13):
-        print deck[x + deckstart]
-        print [x + deckstart]
-        deck[x + deckstart] = Card("shuffled", suit, ranks[x], False, setimg, x)
-
+        deck[x + deckstart] = Card("shuffled", suit, ranks[x], False, setimg, x, 0, 0)
+    
         
 def shuffle():
     global deck, shuffled
     
     for card in deck:
         shuffled.append(card)
-
     random.shuffle(shuffled)
 
     
@@ -203,7 +215,7 @@ def drawlayer(layer, layernum, canvas):
             # Because the back for all cards is the same, I can use any 
             # card from my list of cards(the deck) to draw the back.
             # Thats why I chose deck[0]. It's completely abritrary.
-            deck[0].get_cardfront(canvas, "back", LOC_BACK_X, LOC_BACK_Y)
+            deck[0].get_cardfront(canvas, LOC_BACK_X, LOC_BACK_Y)
             
         else:
             # Width of one card. This might create a bug
@@ -212,7 +224,7 @@ def drawlayer(layer, layernum, canvas):
             SET = layer[cards].exposedimg
             CARD_SPOT_IN_SETIMG = layer[cards].cardnum
             
-            layer[cards].get_cardfront(canvas, "front", LOC_BACK_X, LOC_BACK_Y)
+            layer[cards].get_cardfront(canvas, LOC_BACK_X, LOC_BACK_Y)
             
             
 def draw_new_set_from_deck(canvas):
@@ -223,7 +235,7 @@ def draw_new_set_from_deck(canvas):
    
     for card in range(len(cards_shown)):
         LOC_BACK_X += 85
-        cards_shown[card].get_cardfront(canvas, "front", LOC_BACK_X, LOC_BACK_Y)
+        cards_shown[card].get_cardfront(canvas, LOC_BACK_X, LOC_BACK_Y)
 
         
 def click_new_set_from_deck():
@@ -265,12 +277,15 @@ def click_new_set_from_deck():
                 # out of the deck is added. Potential bug
                 for x in range(3):
                     cards_shown.append(shuffled[x + location_in_deck])
+                    cards_shown[x].set_exposed(True)
         else:
             pass
     else:
         pass  
 
-
+def where_the_cards():
+    pass 
+    
 # Event Handlers
 
 def draw_handler(canvas):
@@ -280,7 +295,7 @@ def draw_handler(canvas):
     # Drawing Deck
     LOC_BACK_Y = 75
     LOC_BACK_X = 100
-    deck[0].get_cardfront(canvas, "back", LOC_BACK_X, LOC_BACK_Y)
+    deck[0].get_cardfront(canvas, LOC_BACK_X, LOC_BACK_Y)
     
     drawlayer(layer1, 1, canvas)
     drawlayer(layer2, 2, canvas)
