@@ -73,6 +73,8 @@ suits = ("Diamonds", "Spades", "Hearts", "Clovers")
 deck = []
 shuffled = []
 
+cards_shown = []
+
 layer1 = []
 layer2 = []
 layer3 = []
@@ -214,7 +216,18 @@ def drawlayer(layer, layernum, canvas):
             
             
 def draw_new_set_from_deck(canvas):
-    global shuffled, location_in_deck, x1, x2, y1, y2, clicknum
+    global cards_shown
+    
+    LOC_BACK_X = 100
+    LOC_BACK_Y = 75
+   
+    for card in range(len(cards_shown)):
+        LOC_BACK_X += 85
+        cards_shown[card].get_cardfront(canvas, "front", LOC_BACK_X, LOC_BACK_Y)
+
+        
+def click_new_set_from_deck():
+    global x1, y1, x2, x1, location_in_deck, cards_shown
     
     TOPLEFTDECK_Y = 19
     TOPLEFTDECK_X = 59
@@ -231,13 +244,10 @@ def draw_new_set_from_deck(canvas):
     else:
         x = x2
         y = y2
-    
+        
     # Check if player has clicked on the deck
     if BOTTOMRIGHTDECK_X > x > TOPLEFTDECK_X:
         if BOTTOMRIGHTDECK_Y > y > TOPLEFTDECK_Y:
-            clicknum == 1
-            x2 = 60
-            y2 = 20
             
             location_in_deck += 3
             
@@ -247,25 +257,25 @@ def draw_new_set_from_deck(canvas):
             
             if location_in_deck == num_of_cards:
                 location_in_deck = 0
+                cards_shown = []
+                
             else:
+                cards_shown = []
+                # Add if else statement here when the feature to move cards
+                # out of the deck is added. Potential bug
                 for x in range(3):
                     cards_shown.append(shuffled[x + location_in_deck])
-            
-                for card in range(3):
-                    LOC_BACK_X += 85
-                    cards_shown[card].get_cardfront(canvas, "front", LOC_BACK_X, LOC_BACK_Y)
-
         else:
             pass
     else:
-        pass    
+        pass  
 
 
 # Event Handlers
 
 def draw_handler(canvas):
     global layer1, layer2, layer3, layer4, layer5, layer6, layer7 
-    global DRAWSCALE, deck
+    global DRAWSCALE, deck, cards_shown
     
     # Drawing Deck
     LOC_BACK_Y = 75
@@ -298,6 +308,8 @@ def mouse_handler(position):
         x2 = position[0]
         y2 = position[1]
         clicknum = 0
+        
+    click_new_set_from_deck()
         
 
 # Make Frame
