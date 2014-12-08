@@ -27,8 +27,7 @@ class Card:
         self.LOC_BACK_Y = LOC_BACK_Y
     
     def __str__(self):
-        return self.value + " of " + self.suit + ". It's location is" + self.location + ". Exposed:" + str(self.exposed) + ". Exposed image is:" + str(self.exposedimg) + " Cardnum:" + str(self.cardnum) + " X:" + LOC_BACK_X + " Y:" + LOC_BACK_Y
-        
+        return self.suit + self.value + "X: " + str(self.LOC_BACK_X) + "Y: " + str(self.LOC_BACK_Y)
     
     # Getters
     def get_exposed(self):
@@ -39,6 +38,12 @@ class Card:
     
     def get_cardnum(self):
         return self.cardnum
+    
+    def get_LOC_BACK_X(self):
+        return self.LOC_BACK_X
+    
+    def get_LOC_BACK_Y(self):
+        return self.LOC_BACK_Y
     
     def get_cardfront(self, canvas, LOC_BACK_X, LOC_BACK_Y):
         
@@ -71,6 +76,12 @@ class Card:
         
     def set_exposed(self, exposed):
         self.exposed = exposed
+    
+    def set_X(self, LOC_BACK_X):
+        self.LOC_BACK_X = LOC_BACK_X
+        
+    def set_Y(self, LOC_BACK_Y):
+        self.LOC_BACK_Y = LOC_BACK_Y
 
    
 # Global variables
@@ -152,16 +163,22 @@ def main():
     
     assign_loc(1, layer1, "layer1")
     layer1[-1].set_exposed(True)
+
     assign_loc(2, layer2, "layer2")
     layer2[-1].set_exposed(True)
+
     assign_loc(3, layer3, "layer3")
     layer3[-1].set_exposed(True)
+
     assign_loc(4, layer4, "layer4")
     layer4[-1].set_exposed(True)
+
     assign_loc(5, layer5, "layer5")
     layer5[-1].set_exposed(True)
+
     assign_loc(6, layer6, "layer6")
     layer6[-1].set_exposed(True)
+    
     assign_loc(7, layer7, "layer7")
     layer7[-1].set_exposed(True)
     
@@ -211,11 +228,12 @@ def drawlayer(layer, layernum, canvas):
         DIST_FROM_LAST = 25
         LOC_BACK_Y = LOC_BACK_Y + DIST_FROM_LAST * cards
         
+        layer[cards].set_X(LOC_BACK_X)
+        layer[cards].set_Y(LOC_BACK_Y)
+        
         if layer[cards].exposed == False:
-            # Because the back for all cards is the same, I can use any 
-            # card from my list of cards(the deck) to draw the back.
-            # Thats why I chose deck[0]. It's completely abritrary.
-            deck[0].get_cardfront(canvas, LOC_BACK_X, LOC_BACK_Y)
+            draw_card_back(canvas, LOC_BACK_X, LOC_BACK_Y)
+            
             
         else:
             # Width of one card. This might create a bug
@@ -225,7 +243,7 @@ def drawlayer(layer, layernum, canvas):
             CARD_SPOT_IN_SETIMG = layer[cards].cardnum
             
             layer[cards].get_cardfront(canvas, LOC_BACK_X, LOC_BACK_Y)
-            
+
             
 def draw_new_set_from_deck(canvas):
     global cards_shown
@@ -236,6 +254,8 @@ def draw_new_set_from_deck(canvas):
     for card in range(len(cards_shown)):
         LOC_BACK_X += 85
         cards_shown[card].get_cardfront(canvas, LOC_BACK_X, LOC_BACK_Y)
+        cards_shown[card].set_X(LOC_BACK_X)
+        cards_shown[card].set_Y(LOC_BACK_Y)
 
         
 def click_new_set_from_deck():
@@ -272,6 +292,10 @@ def click_new_set_from_deck():
                 cards_shown = []
                 
             else:
+                for cards in cards_shown:
+                    cards_shown[card].set_X("deck")
+                    cards_shown[card].set_Y("deck")
+                
                 cards_shown = []
                 # Add if else statement here when the feature to move cards
                 # out of the deck is added. Potential bug
@@ -281,10 +305,52 @@ def click_new_set_from_deck():
         else:
             pass
     else:
-        pass  
+        pass 
+    
+    
 
-def where_the_cards():
-    pass 
+def draw_card_back(canvas, LOC_BACK_X, LOC_BACK_Y):
+    
+    SET = simplegui.load_image('http://i.imgur.com/p6hCw9U.png')
+    CARDWIDTH = SET.get_width()
+    CARDHEIGHT = SET.get_height()
+    DRAWSCALE = 1.2
+            
+    return canvas.draw_image(SET, (CARDWIDTH /2 , CARDHEIGHT / 2), 
+                     (CARDWIDTH, CARDHEIGHT), 
+                     (LOC_BACK_X, LOC_BACK_Y), 
+                     (CARDWIDTH * DRAWSCALE, CARDHEIGHT * DRAWSCALE))
+    
+def check_if_click_on_layer(layer):
+    global x1, y1, x2, x1
+    
+    
+    CARDWIDTH = 71 / 2
+    CARDHEIGHT = 96 / 2
+    
+    if len(layer) > 0:
+        print layer[-1]
+        
+        card_X = layer[-1].get_LOC_BACK_X 
+        card_Y = layer[-1].get_LOC_BACK_Y 
+        
+        topleft_X = int(card_X) - CARDWIDTH
+        topleft_Y = card_Y - CARDHEIGHT
+        
+        bottomright_X = card_X + CARDWIDTH
+        bottomright_Y = card_Y + CARDHEIGHT
+        
+        if bottomright_X > x > topleft_X:
+            if bottomright_Y > y > topleft_Y:
+                print "IT WORKS"
+            else:
+                pass
+        else: 
+            pass
+    
+    else: 
+        pass
+    
     
 # Event Handlers
 
@@ -295,7 +361,7 @@ def draw_handler(canvas):
     # Drawing Deck
     LOC_BACK_Y = 75
     LOC_BACK_X = 100
-    deck[0].get_cardfront(canvas, LOC_BACK_X, LOC_BACK_Y)
+    draw_card_back(canvas, LOC_BACK_X, LOC_BACK_Y)
     
     drawlayer(layer1, 1, canvas)
     drawlayer(layer2, 2, canvas)
@@ -309,7 +375,7 @@ def draw_handler(canvas):
     
     
 def mouse_handler(position):
-    global x1, x2, y1, y2, clicknum
+    global x1, x2, y1, y2, clicknum, layer1, layer2, layer3, layer4, layer5, layer6, layer7
 
     # To play need to select a card and then click on what you
     # where you want to put it. This allows us to keep track
@@ -325,6 +391,14 @@ def mouse_handler(position):
         clicknum = 0
         
     click_new_set_from_deck()
+    check_if_click_on_layer(layer1)
+    check_if_click_on_layer(layer2)
+    check_if_click_on_layer(layer3)
+    check_if_click_on_layer(layer4)
+    check_if_click_on_layer(layer5)
+    check_if_click_on_layer(layer6)
+    check_if_click_on_layer(layer7)
+    
         
 
 # Make Frame
