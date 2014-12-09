@@ -4,14 +4,6 @@ import simplegui
 import random
 
 # Link to sets http://imgur.com/dEoEdBG,rjCP3uF,HfL7T9o,B0PojjI
-# Current bugs. Layer 2 draw repeats 4 times
-# Layer 3 draw repeats 9
-# My card width probably go off the end of the set.
-# Missing Cards: 6 of spades
-# 8 of spades
-# 2 of spades
-# Queen of spades
-# 5 of spades
 
 # Classes
 class Card:
@@ -27,7 +19,7 @@ class Card:
         self.LOC_BACK_Y = LOC_BACK_Y
     
     def __str__(self):
-        return self.suit + self.value + "X: " + str(self.LOC_BACK_X) + "Y: " + str(self.LOC_BACK_Y)
+        return str(self.LOC_BACK_X) + " " + str(self.LOC_BACK_Y)
     
     # Getters
     def get_exposed(self):
@@ -45,7 +37,7 @@ class Card:
     def get_LOC_BACK_Y(self):
         return self.LOC_BACK_Y
     
-    def get_cardfront(self, canvas, LOC_BACK_X, LOC_BACK_Y):
+    def get_cardfront(self, canvas):
         
         CARDWIDTH = 167
         CARDHEIGHT = 243
@@ -53,6 +45,8 @@ class Card:
         
         CARD_SPOT_IN_SETIMG = self.cardnum
         exposed = self.exposed		
+        LOC_BACK_X = self.LOC_BACK_X
+        LOC_BACK_Y = self.LOC_BACK_Y
         
         if exposed == True:
             SET = self.exposedimg
@@ -107,9 +101,9 @@ top4 = []
 
 location_in_deck = 0 
 
-x1 = 0
+x = 0
 x2 = 0 
-y1 = 0
+y = 0
 y2 = 0
 clicknum = 0
 
@@ -218,31 +212,29 @@ def shuffle():
     
 def drawlayer(layer, layernum, canvas):
     
-    for cards in range(len(layer)):
-        BACK = simplegui.load_image('http://i.imgur.com/p6hCw9U.png')
-        BACKWIDTH = BACK.get_width()
-        BACKHEIGHT = BACK.get_height()
-        LOC_BACK_Y = 300
-        LOC_BACK_X = 100 * layernum
+    for card in range(len(layer)):
+        
         DRAWSCALE = 1.25
         DIST_FROM_LAST = 25
-        LOC_BACK_Y = LOC_BACK_Y + DIST_FROM_LAST * cards
         
-        layer[cards].set_X(LOC_BACK_X)
-        layer[cards].set_Y(LOC_BACK_Y)
+        LOC_BACK_Y = 300
         
-        if layer[cards].exposed == False:
+        LOC_BACK_Y = LOC_BACK_Y + DIST_FROM_LAST * card
+        LOC_BACK_X = 100 * layernum
+        
+        if layer[card].exposed == False:
             draw_card_back(canvas, LOC_BACK_X, LOC_BACK_Y)
             
-            
         else:
-            # Width of one card. This might create a bug
             CARDWIDTH = 167
             CARDHEIGHT = 243
-            SET = layer[cards].exposedimg
-            CARD_SPOT_IN_SETIMG = layer[cards].cardnum
             
-            layer[cards].get_cardfront(canvas, LOC_BACK_X, LOC_BACK_Y)
+            layer[card].set_X(LOC_BACK_X)
+            layer[card].set_Y(LOC_BACK_Y)
+            
+            SET = layer[card].exposedimg
+            CARD_SPOT_IN_SETIMG = layer[card].cardnum
+            layer[card].get_cardfront(canvas)
 
             
 def draw_new_set_from_deck(canvas):
@@ -308,7 +300,6 @@ def click_new_set_from_deck():
         pass 
     
     
-
 def draw_card_back(canvas, LOC_BACK_X, LOC_BACK_Y):
     
     SET = simplegui.load_image('http://i.imgur.com/p6hCw9U.png')
@@ -320,25 +311,29 @@ def draw_card_back(canvas, LOC_BACK_X, LOC_BACK_Y):
                      (CARDWIDTH, CARDHEIGHT), 
                      (LOC_BACK_X, LOC_BACK_Y), 
                      (CARDWIDTH * DRAWSCALE, CARDHEIGHT * DRAWSCALE))
+
+
+def check_if_click_on_layer(layer, layernum):
+    global y, x
     
-def check_if_click_on_layer(layer):
-    global x1, y1, x2, x1
     
-    
-    CARDWIDTH = 71 / 2
-    CARDHEIGHT = 96 / 2
+    CARDWIDTH = 90 / 2
+    CARDHEIGHT = 130 / 2
     
     if len(layer) > 0:
-        print layer[-1]
+        DIST_FROM_LAST = 25
         
-        card_X = layer[-1].get_LOC_BACK_X 
-        card_Y = layer[-1].get_LOC_BACK_Y 
+        LOC_BACK_Y = 275
         
-        topleft_X = int(card_X) - CARDWIDTH
-        topleft_Y = card_Y - CARDHEIGHT
+        LOC_BACK_Y = LOC_BACK_Y + DIST_FROM_LAST * len(layer)
+        LOC_BACK_X = 100 * layernum
         
-        bottomright_X = card_X + CARDWIDTH
-        bottomright_Y = card_Y + CARDHEIGHT
+        
+        topleft_X = LOC_BACK_X - CARDWIDTH
+        topleft_Y = LOC_BACK_Y - CARDHEIGHT
+        
+        bottomright_X = LOC_BACK_X + CARDWIDTH
+        bottomright_Y = LOC_BACK_Y + CARDHEIGHT
         
         if bottomright_X > x > topleft_X:
             if bottomright_Y > y > topleft_Y:
@@ -375,31 +370,34 @@ def draw_handler(canvas):
     
     
 def mouse_handler(position):
-    global x1, x2, y1, y2, clicknum, layer1, layer2, layer3, layer4, layer5, layer6, layer7
+    global x, x2, y, y2, clicknum, layer1, layer2, layer3, layer4, layer5, layer6, layer7
 
     # To play need to select a card and then click on what you
     # where you want to put it. This allows us to keep track
     # of what was selected (x1/y1) and where it was put(x2/y2).
     
-    if clicknum == 0:
-        x1 = position[0]
-        y1 = position[1]
-        clicknum = 1
-    elif clicknum == 1:
-        x2 = position[0]
-        y2 = position[1]
-        clicknum = 0
+    x = position[0]
+    y = position[1]
+    
+    #if clicknum == 0:
+        #x1 = position[0]
+        #y1 = position[1]
+        #clicknum = 1
+    #elif clicknum == 1:
+        #x2 = position[0]
+        #y2 = position[1]
+        #clicknum = 0
         
     click_new_set_from_deck()
-    check_if_click_on_layer(layer1)
-    check_if_click_on_layer(layer2)
-    check_if_click_on_layer(layer3)
-    check_if_click_on_layer(layer4)
-    check_if_click_on_layer(layer5)
-    check_if_click_on_layer(layer6)
-    check_if_click_on_layer(layer7)
-    
-        
+    check_if_click_on_layer(layer1, 1)
+    check_if_click_on_layer(layer2, 2)
+    check_if_click_on_layer(layer3, 3)
+    check_if_click_on_layer(layer4, 4)
+    check_if_click_on_layer(layer5, 5)
+    check_if_click_on_layer(layer6, 6)
+    check_if_click_on_layer(layer7, 7)
+
+
 
 # Make Frame
 frame = simplegui.create_frame('Solitaire', 1000, 850)
