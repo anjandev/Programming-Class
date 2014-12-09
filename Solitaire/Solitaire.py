@@ -245,13 +245,13 @@ def draw_new_set_from_deck(canvas):
    
     for card in range(len(cards_shown)):
         LOC_BACK_X += 85
-        cards_shown[card].get_cardfront(canvas, LOC_BACK_X, LOC_BACK_Y)
+        cards_shown[card].get_cardfront(canvas)
         cards_shown[card].set_X(LOC_BACK_X)
         cards_shown[card].set_Y(LOC_BACK_Y)
 
         
 def click_new_set_from_deck():
-    global x1, y1, x2, x1, location_in_deck, cards_shown
+    global x, y, location_in_deck, cards_shown
     
     TOPLEFTDECK_Y = 19
     TOPLEFTDECK_X = 59
@@ -262,12 +262,6 @@ def click_new_set_from_deck():
     LOC_BACK_Y = 75
     LOC_BACK_X = 100 
     
-    if clicknum == 1:
-        x = x1
-        y = y1
-    else:
-        x = x2
-        y = y2
         
     # Check if player has clicked on the deck
     if BOTTOMRIGHTDECK_X > x > TOPLEFTDECK_X:
