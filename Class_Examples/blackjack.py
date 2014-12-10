@@ -1,4 +1,11 @@
-# Blackjack
+# Blackjack 
+# Modded by Anjan Momi
+
+# CHANGES
+# Added chips
+# changed colour of background
+# added score keeper
+# added trash talk
 
 import simplegui
 import random
@@ -7,6 +14,7 @@ import random
 CARD_SIZE = (73, 98)
 CARD_CENTER = (36.5, 49)
 card_images = simplegui.load_image("http://commondatastorage.googleapis.com/codeskulptor-assets/cards.jfitz.png")
+chips = simplegui.load_image("https://i.imgur.com/VWeEEwi.png")
 
 CARD_BACK_SIZE = (71, 96)
 CARD_BACK_CENTER = (35.5, 48)
@@ -17,6 +25,12 @@ card_back = simplegui.load_image("http://commondatastorage.googleapis.com/codesk
 in_play = False
 player_message = ""
 dealer_message = ""
+
+trash_talk = ""
+
+# added score system mod
+dealer_score = 0
+player_score = 0
 
 # define globals for cards:
 # tuples for suits and ranks
@@ -120,14 +134,53 @@ class Deck:
 #initialize hands
 #add cards to hands
 
+# Makes trash talk if the player 2 loses. Addition.
+def trashtalk():
+    global trash_talk
+    
+    num = random.randint(0, 10)
+    
+    if num == 1:
+        trash_talk = "REKT."
+        
+    elif num == 2:
+        trash_talk = "Git g00d"
+        
+    elif num == 3:
+        trash_talk = "GG WP"
+        
+    elif num == 4:
+        trash_talk = "Being this bad at Blackjack. LOL."
+        
+    elif num == 5:
+        trash_talk = "Mad cause bad"
+        
+    elif num == 6:
+        trash_talk = "You have the mental agility of a bagel"
+        
+    elif num == 7:
+        trash_talk = "EZ game"
+        
+    elif num == 8:
+        trash_talk = "You suck."
+        
+    elif num == 9:
+        trash_talk = "2 EZ"
+        
+    elif num == 10:
+        trash_talk = "You lost when you pressed play m8"
+
 def deal():
-    global dealer_message, player_message, in_play
-    global deck, player_hand, dealer_hand
+    global dealer_message, player_message, in_play, trash_talk
+    global deck, player_hand, dealer_hand, dealer_score, player_score
     if in_play:
+        trashtalk()
         dealer_message = "You forfeit, dealer wins."
-        # update score if you have a score variable
+        # update score
+        dealer_score +=1
         in_play = False
 
+    trash_talk = ""
     deck = Deck()
     deck.shuffle()
     player_hand = Hand()
@@ -145,6 +198,7 @@ def deal():
 # if busted, update message and in_play status
 def hit():
     global player_message, player_hand, dealer_message, in_play
+    global dealer_score
     
     if not in_play:
         player_message = "Please deal first!"
@@ -155,7 +209,9 @@ def hit():
     player_val = player_hand.get_value()
     
     if player_val > 21:
-        # Update Score
+        # update score
+        dealer_score +=1
+        trashtalk()
         player_message = "Busted! Deal again?"
         dealer_message = "Dealer Wins!"
         in_play = False
@@ -165,6 +221,7 @@ def hit():
 # update message and in_play
 def stand():
     global dealer_hand, player_message, dealer_message, in_play
+    global player_score, dealer_score
     
     if not in_play:
         player_message = "Please deal first!"
@@ -175,19 +232,25 @@ def stand():
         dealer_val = dealer_hand.get_value()
         
         if dealer_val > 21:
-            # Update Score
+            # update score
+            player_score +=1
             player_message = "Player Wins!"
             dealer_message = "Busted! Deal again?"
             in_play = False
         elif dealer_val >= player_hand.get_value():
-            # Update Score
+            # update score
+            dealer_score +=1
+            trashtalk()
             player_message = "Deal again?"
             dealer_message = "Dealer Wins!"
             in_play = False
         else:
-            # Update Score
-            player_message = "Player Wins!"
-            dealer_message = "Deal again?"
+            # update score
+            dealer_score +=1
+            trashtalk()
+            # Not a mod. I just copied it wrong.
+            player_message = "Deal again?"
+            dealer_message = "Dealer Wins!"
             in_play = False
             
         
@@ -198,8 +261,29 @@ def draw(canvas):
     canvas.draw_text("Dealer's Hand", [50,175],20,"white")
     dealer_hand.draw(canvas,[50,200])
     canvas.draw_text("BLACKJACK", [50,100],40,"white")
+    canvas.draw_text("Your chips:", [450,25],20,"white")
     canvas.draw_text(dealer_message, [300,175],20, "white")
     canvas.draw_text(player_message, [300,375],20, "white")
+    canvas.draw_text(trash_talk, [200,525],20, "white")
+    canvas.draw_text("Dealer Score: " + str(dealer_score), [125,575],20, "white")
+    canvas.draw_text("Player Score: " + str(player_score), [275,575],20, "white")
+    
+    # Mod: draws "chips" from player score
+    CHIPSWIDTH = chips.get_width()
+    CHIPSHEIGHT = chips.get_height()
+    CHIPSDRAWSCALE = 0.25
+    # starting location for chips
+    chipsLOC_BACK_X = 500
+    chipsLOC_BACK_Y = 70
+    
+    for x in range(player_score):
+        canvas.draw_image(chips, (CHIPSWIDTH / 2 , CHIPSHEIGHT / 2), 
+                     (CHIPSWIDTH, CHIPSHEIGHT), 
+                     (chipsLOC_BACK_X, chipsLOC_BACK_Y + x * 20), 
+                     (CHIPSWIDTH * CHIPSDRAWSCALE, CHIPSHEIGHT * CHIPSDRAWSCALE))
+
+        
+    
     #draw score if you have a score variable
     if in_play:
         canvas.draw_image(card_back,
@@ -211,7 +295,8 @@ def draw(canvas):
 
 # initialize frame
 frame = simplegui.create_frame("Blackjack", 600, 600)
-frame.set_canvas_background("Green")
+# Changed colour
+frame.set_canvas_background("Magenta")
 
 #create buttons and callbacks
 frame.add_button("Deal", deal, 200)
