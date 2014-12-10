@@ -8,7 +8,7 @@ import random
 # Classes
 class Card:
 
-    def __init__(self, location, suit, value, exposed, exposedimg, cardnum, LOC_BACK_X, LOC_BACK_Y):
+    def __init__(self, location, suit, value, exposed, exposedimg, cardnum, colour, LOC_BACK_X, LOC_BACK_Y):
         self.location = location
         self.suit = suit
         self.value = value
@@ -17,6 +17,7 @@ class Card:
         self.cardnum = cardnum
         self.LOC_BACK_X = LOC_BACK_X
         self.LOC_BACK_Y = LOC_BACK_Y
+        self.colour = colour
     
     def __str__(self):
         return str(self.LOC_BACK_X) + " " + str(self.LOC_BACK_Y)
@@ -44,24 +45,15 @@ class Card:
         DRAWSCALE = 0.5
         
         CARD_SPOT_IN_SETIMG = self.cardnum
-        exposed = self.exposed		
         LOC_BACK_X = self.LOC_BACK_X
         LOC_BACK_Y = self.LOC_BACK_Y
         
-        if exposed == True:
-            SET = self.exposedimg
-            # TODO make this work if back is selected (change pic to back)
-        elif exposed == False:
-            SET = simplegui.load_image('http://i.imgur.com/p6hCw9U.png')
-            CARDWIDTH = SET.get_width()
-            CARDHEIGHT = SET.get_height()
-            DRAWSCALE = 1.2
+        SET = self.exposedimg
             
         return canvas.draw_image(SET, (CARDWIDTH / 2 + CARDWIDTH * CARD_SPOT_IN_SETIMG, CARDHEIGHT / 2), 
                      (CARDWIDTH, CARDHEIGHT), 
                      (LOC_BACK_X, LOC_BACK_Y), 
                      (CARDWIDTH * DRAWSCALE, CARDHEIGHT * DRAWSCALE))
-    
     
     # Setters
     
@@ -79,6 +71,8 @@ class Card:
 
    
 # Global variables
+layer_dic = {"red": "black", "black": "red"}
+
 ranks = ("Ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Joker", "Queen", "King")
 suits = ("Diamonds", "Spades", "Hearts", "Clovers")
 deck = []
@@ -102,10 +96,10 @@ top4 = []
 location_in_deck = 0 
 
 x = 0
-x2 = 0 
 y = 0
-y2 = 0
-clicknum = 0
+clickednum = 0
+clickedcard1 = " "
+clickedcard2 = " "
 
 deckcard1 = 0
 deckcard2 = 0
@@ -131,8 +125,6 @@ heartsimg = simplegui.load_image("http://i.imgur.com/HfL7T9o.png")
 cloversimg = simplegui.load_image("http://i.imgur.com/dEoEdBG.png")
 
 
-# Where the rank starts in the deck. Made changes. May cause bugs.
-
 # Helper Functions
 def main():
     global deck, shuffled, diamonds, spades, hearts, clovers
@@ -146,12 +138,11 @@ def main():
     spadesstart = 1 * ranklen
     heartsstart = 2 * ranklen
     cloversstart = 3 * ranklen
-    
 
-    definecards(diamondsstart, 'Diamonds', diamondsimg)
-    definecards(spadesstart, 'Spades', spadesimg)
-    definecards(heartsstart, 'Hearts', heartsimg)
-    definecards(cloversstart, 'Clovers', cloversimg)
+    definecards(diamondsstart, 'Diamonds', diamondsimg, "red")
+    definecards(spadesstart, 'Spades', spadesimg, "black")
+    definecards(heartsstart, 'Hearts', heartsimg, "red")
+    definecards(cloversstart, 'Clovers', cloversimg, "black")
     
     shuffle()
     
@@ -195,11 +186,11 @@ def makedeck():
             deck.append(rank + suit)
            
             
-def definecards(deckstart, suit, setimg):
+def definecards(deckstart, suit, setimg, colour):
     global deck, ranks
    
     for x in range(13):
-        deck[x + deckstart] = Card("shuffled", suit, ranks[x], False, setimg, x, 0, 0)
+        deck[x + deckstart] = Card("shuffled", suit, ranks[x], False, setimg, x, colour, 0, 0)
     
         
 def shuffle():
@@ -308,20 +299,17 @@ def draw_card_back(canvas, LOC_BACK_X, LOC_BACK_Y):
 
 
 def check_if_click_on_layer(layer, layernum):
-    global y, x
+    global y, x, clickedcard1, clickednum, clickedcard2
     
-    
-    CARDWIDTH = 90 / 2
-    CARDHEIGHT = 130 / 2
+    CARDWIDTH = 85 / 2
+    CARDHEIGHT = 125 / 2
     
     if len(layer) > 0:
         DIST_FROM_LAST = 25
-        
-        LOC_BACK_Y = 275
+        LOC_BACK_Y = 277
         
         LOC_BACK_Y = LOC_BACK_Y + DIST_FROM_LAST * len(layer)
         LOC_BACK_X = 100 * layernum
-        
         
         topleft_X = LOC_BACK_X - CARDWIDTH
         topleft_Y = LOC_BACK_Y - CARDHEIGHT
@@ -331,7 +319,12 @@ def check_if_click_on_layer(layer, layernum):
         
         if bottomright_X > x > topleft_X:
             if bottomright_Y > y > topleft_Y:
-                print "IT WORKS"
+                if clickednum == 0:
+                    clickedcard1 = layer[-1]
+                    clickednum = 1
+                else:
+                    clickedcard2 = layer[-1]
+                    clickednum = 0  
             else:
                 pass
         else: 
@@ -364,24 +357,11 @@ def draw_handler(canvas):
     
     
 def mouse_handler(position):
-    global x, x2, y, y2, clicknum, layer1, layer2, layer3, layer4, layer5, layer6, layer7
-
-    # To play need to select a card and then click on what you
-    # where you want to put it. This allows us to keep track
-    # of what was selected (x1/y1) and where it was put(x2/y2).
+    global x, y, layer1, layer2, layer3, layer4, layer5, layer6, layer7
     
     x = position[0]
     y = position[1]
     
-    #if clicknum == 0:
-        #x1 = position[0]
-        #y1 = position[1]
-        #clicknum = 1
-    #elif clicknum == 1:
-        #x2 = position[0]
-        #y2 = position[1]
-        #clicknum = 0
-        
     click_new_set_from_deck()
     check_if_click_on_layer(layer1, 1)
     check_if_click_on_layer(layer2, 2)
@@ -390,7 +370,6 @@ def mouse_handler(position):
     check_if_click_on_layer(layer5, 5)
     check_if_click_on_layer(layer6, 6)
     check_if_click_on_layer(layer7, 7)
-
 
 
 # Make Frame
