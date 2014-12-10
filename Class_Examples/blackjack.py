@@ -2,6 +2,8 @@
 # Modded by Anjan Momi
 
 # CHANGES
+# See exactly what lines were changed here: 
+# https://github.com/anjandev/Programming-Class/commit/f842575adbd9c67a5f16f35c291aa54eb6480ddf
 # Added chips
 # changed colour of background
 # added score keeper
