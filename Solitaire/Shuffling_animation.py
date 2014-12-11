@@ -41,6 +41,9 @@ class Card:
     def get_colour(self):
         return self.colour
     
+    def get_val(self):
+        return self.value
+    
     def get_location(self):
         return self.location
     
@@ -77,7 +80,10 @@ class Card:
 
    
 # Global variables
-layer_dic = {'red': 'black', 'black': 'red'}
+layercolour_dic = {'red': 'black', 'black': 'red'}
+layerval_dic = {'Ace': '2', '2': '3', '3': '4', '4': '5', '5': '6', '6':'7',
+                '7':'8', '8':'9', '9': '10', '10': 'Joker', 'Joker' : 'Queen',
+                'Queen': 'King'}
 
 ranks = ("Ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Joker", "Queen", "King")
 suits = ("Diamonds", "Spades", "Hearts", "Clovers")
@@ -241,7 +247,7 @@ def draw_new_set_from_deck(canvas):
     LOC_BACK_Y = 75
    
     for card in range(len(cards_shown)):
-        LOC_BACK_X += 85
+        LOC_BACK_X += 100
         cards_shown[card].get_cardfront(canvas)
         cards_shown[card].set_X(LOC_BACK_X)
         cards_shown[card].set_Y(LOC_BACK_Y)
@@ -306,6 +312,7 @@ def draw_card_back(canvas, LOC_BACK_X, LOC_BACK_Y):
 
 def check_if_click_on_layer(layer, layernum):
     global y, x, clickedlayer1, clickednum, clickedlayer2
+    global clickedlayernum1, clickedlayernum2
     
     CARDWIDTH = 85 / 2
     CARDHEIGHT = 125 / 2
@@ -326,44 +333,97 @@ def check_if_click_on_layer(layer, layernum):
         if bottomright_X > x > topleft_X:
             if bottomright_Y > y > topleft_Y:
                 if clickednum == 0:
-                    clickedlayer1 = layer
-                    clickednum = 1
+                    if layer[-1].get_exposed() == True:
+                        clickedlayer1 = layer
+                        clickednum = 1
+                    else:
+                        layer[-1].set_exposed(True)
                 else:
-                    clickedlayer2 = layer
-                    clickednum = 0  
-            else:
-                pass
-        else: 
-            pass
+                    if layer[-1].get_exposed() == True:
+                        clickedlayer2 = layer
+                        clickednum = 0  
+                    else:
+                        layer[-1].set_exposed(True)
+
     
-    else: 
-        pass
-    
-def check_if_colours_match():
-    global clickedlayer1, clickedlayer2, layer_dic
-    global layer1, layer2, layer3, layer4, layer5, layer6,
-    global layer7
+def put_in_series():
+    global clickedlayer1, clickedlayer2, layercolour_dic, layerval_dic
 
     if clickedlayer2 == " ":
         pass
     
     else:
-        card1colour = clickedlayer1[-1].get_colour()
-        card2colour = clickedlayer2[-1].get_colour()
+        # This fixes bug when the same card is clicked twice
+        if clickedlayer1[-1].get_val() != clickedlayer2[-1].get_val():
+            card1colour = clickedlayer1[-1].get_colour()
+            card2colour = clickedlayer2[-1].get_colour()
         
-        if layer_dic[card1colour] == card2colour:
-            print clickedlayer1
-            print clickedlayer1[-1]
-            print clickedlayer2[-1]
-            clickedlayer1.append(clickedlayer2[-1])
-            clickedlayer1.pop()
-            print clickedlayer2
-            print clickedlayer1
-        elif layer_dic[card2colour] == card1colour:
-            pass
-        else:
-            pass
+            card1val = clickedlayer1[-1].get_val()
+            card2val = clickedlayer2[-1].get_val()
         
+            if layercolour_dic[card1colour] == card2colour:            
+                if layerval_dic[card1val] == card2val:
+                    clickedlayer2.append(clickedlayer1[-1])
+                    clickedlayer1.pop()
+                    clickedlayer1 = " "
+                    clickedlayer2 = " "
+                
+            elif layercolour_dic[card2colour] == card1colour:
+                if layerval_dic[card2val] == card1val:
+                    clickedlayer1.append(clickedlayer2[-1])
+                    clickedlayer2.pop()
+                    clickedlayer1 = " "
+                    clickedlayer2 = " "
+
+        
+def click_on_cards_from_deck():
+    global cards_shown, clickednum, x, y
+    
+    CARDWIDTH = 85 / 2
+    CARDHEIGHT = 125 / 2
+    
+    if len(cards_shown) > 0:
+        DIST_FROM_LAST = 85
+        LOC_BACK_Y = 277
+                
+        LOC_BACK_X = 100
+        LOC_BACK_Y = 75
+        
+        print "______________________________________"
+        
+        print "X: " + str(x)
+        print "Y: " + str(y)
+           
+        for x in range(len(cards_shown)):
+            LOC_BACK_X += 100
+            topleft_X = LOC_BACK_X - CARDWIDTH
+            topleft_Y = LOC_BACK_Y - CARDHEIGHT
+        
+            bottomright_X = LOC_BACK_X + CARDWIDTH
+            bottomright_Y = LOC_BACK_Y + CARDHEIGHT
+            
+            print "card" + str(x)
+            print "X: "
+            print topleft_X,
+            print bottomright_X
+            print "Y: "
+            print topleft_Y,
+            print bottomright_Y
+            
+            
+            if bottomright_X > x > topleft_X:
+                print "passed1"
+                if bottomright_Y < y < topleft_Y:
+                    if clickednum == 0:
+                        print "working"
+                        clickedlayer1 = cards_shown
+                        clickednum = 1
+                        card_in_cards_shown = x
+                    else:
+                        print "working"
+                        clickedlayer2 = cards_shown
+                        clickednum = 0  
+                        card_in_cards_shown = x
 
     
 # Event Handlers
@@ -404,11 +464,18 @@ def mouse_handler(position):
     check_if_click_on_layer(layer6, 6)
     check_if_click_on_layer(layer7, 7)
     
-    check_if_colours_match()
+    put_in_series()
+    
+    click_on_cards_from_deck()
+    
+def button_handler():
+    pass
     
 # Make Frame
 frame = simplegui.create_frame('Solitaire', 1000, 850)
 frame.set_canvas_background('Green')
+restart = frame.add_button('Retart', button_handler, 50)
+
 
 # Call Event Handlers
 frame.set_draw_handler(draw_handler)
