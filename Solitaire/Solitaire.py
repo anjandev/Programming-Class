@@ -376,16 +376,12 @@ def put_in_series():
                     clickedlayer2 = " "
 
         
+        
 def click_on_cards_from_deck():
     global cards_shown, clickednum, x, y
     
     CARDWIDTH = 84 / 2
     CARDHEIGHT = 125 / 2
-    
-    print x
-    print y
-    print "____________________________________"
-
     
     if len(cards_shown) > 0:
         START_X = 101
@@ -393,7 +389,7 @@ def click_on_cards_from_deck():
         
         DIST_BETWEEN = 100
         
-        for x in range(len(cards_shown)):
+        for t in range(len(cards_shown)):
             START_X += DIST_BETWEEN
 
 
@@ -403,16 +399,11 @@ def click_on_cards_from_deck():
             card_left = START_X - CARDWIDTH
             card_right = START_X + CARDWIDTH
                         
-            print "card_left" + str(card_left)
-            print "card_right" + str(card_right)
-            
-            print card_left < x < card_right
-            
             if card_left < x < card_right:
                 if card_top < y < card_bot:
                     print "it works"
 
-    
+                    
 # Event Handlers
 
 def draw_handler(canvas):
