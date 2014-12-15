@@ -105,13 +105,15 @@ top2 = []
 top3 = []
 top4 = []
 
-location_in_deck = 0 
+location_in_deck_add = 3
+location_in_deck = 0
 
 x = 0
 y = 0
 clickednum = 0
-clickedlayer1 = " "
-clickedlayer2 = " "
+card1 = " "
+card2 = " "
+shufflenum = 0
 
 deckcard1 = 0
 deckcard2 = 0
@@ -124,7 +126,6 @@ layercard4 = 0
 layercard5 = 0
 layercard6 = 0
 layercard7 = 0
-
 
 # How many times the player has clicked the deck. So that 
 # the same 3 cards everytime together when they click the
@@ -186,7 +187,7 @@ def assign_loc(numofcards, layer, name_of_layer):
     for x in range(numofcards):
         layer.append(shuffled[0])
         # To-do change location of card that was appended
-        shuffled[0].set_location(name_of_layer)
+        shuffled[0].set_location(layer)
         shuffled.pop(0)
 
       
@@ -202,7 +203,7 @@ def definecards(deckstart, suit, setimg, colour):
     global deck, ranks
    
     for x in range(13):
-        deck[x + deckstart] = Card("shuffled", suit, ranks[x], False, setimg, x, colour, 0, 0)
+        deck[x + deckstart] = Card(shuffled, suit, ranks[x], False, setimg, x, colour, 0, 0)
     
         
 def shuffle():
@@ -254,7 +255,7 @@ def draw_new_set_from_deck(canvas):
 
         
 def click_new_set_from_deck():
-    global x, y, location_in_deck, cards_shown
+    global x, y, location_in_deck, cards_shown, shuffled
     
     TOPLEFTDECK_Y = 19
     TOPLEFTDECK_X = 59
@@ -269,34 +270,31 @@ def click_new_set_from_deck():
     # Check if player has clicked on the deck
     if BOTTOMRIGHTDECK_X > x > TOPLEFTDECK_X:
         if BOTTOMRIGHTDECK_Y > y > TOPLEFTDECK_Y:
-            
-            location_in_deck += 3
-            
+                
             cards_shown = []
-            
-            num_of_cards = len(shuffled)
-            
-            if location_in_deck == num_of_cards:
-                location_in_deck = 0
-                cards_shown = []
                 
+            if location_in_deck + 3 <= len(shuffled):
+                adding = 3
+            elif location_in_deck + 2 <= len(shuffled):
+                adding = 2
+            elif location_in_deck + 1 <= len(shuffled):
+                adding = 1
             else:
-                for cards in cards_shown:
-                    cards_shown[card].set_X("deck")
-                    cards_shown[card].set_Y("deck")
-                
+                location_in_deck = 0
+                adding = 0
                 cards_shown = []
-                # Add if else statement here when the feature to move cards
-                # out of the deck is added. Potential bug
-                for x in range(3):
-                    cards_shown.append(shuffled[x + location_in_deck])
-                    cards_shown[x].set_exposed(True)
-        else:
-            pass
-    else:
-        pass 
-    
-    
+                
+            print len(shuffled)
+                         
+            # Add if else statement here when the feature to move cards
+            # out of the deck is added. Potential bug
+            for x in range(adding):
+                cards_shown.append(shuffled[x + location_in_deck])
+                cards_shown[x].set_exposed(True)
+                
+            location_in_deck = location_in_deck + adding
+
+        
 def draw_card_back(canvas, LOC_BACK_X, LOC_BACK_Y):
     
     SET = simplegui.load_image('http://i.imgur.com/p6hCw9U.png')
@@ -312,7 +310,8 @@ def draw_card_back(canvas, LOC_BACK_X, LOC_BACK_Y):
 
 def check_if_click_on_layer(layer, layernum):
     global y, x, clickedlayer1, clickednum, clickedlayer2
-    global clickedlayernum1, clickedlayernum2
+    global clickedlayernum1, clickedlayernum2, layer_or_shuf1, layer_or_shuf2
+    global card1, card2
     
     CARDWIDTH = 85 / 2
     CARDHEIGHT = 125 / 2
@@ -334,51 +333,50 @@ def check_if_click_on_layer(layer, layernum):
             if bottomright_Y > y > topleft_Y:
                 if clickednum == 0:
                     if layer[-1].get_exposed() == True:
-                        clickedlayer1 = layer
+                        card1 = layer[-1]
                         clickednum = 1
                     else:
                         layer[-1].set_exposed(True)
-                else:
+                        
+                elif clickednum == 1:
                     if layer[-1].get_exposed() == True:
-                        clickedlayer2 = layer
-                        clickednum = 0  
+                        card2 = layer[-1]
+                        clickednum = 0
                     else:
                         layer[-1].set_exposed(True)
 
     
 def put_in_series():
-    global clickedlayer1, clickedlayer2, layercolour_dic, layerval_dic
+    global clickedlayer1, clickedlayer2, layercolour_dic, layerval_dic, layer_or_shuf1
+    global layer_or_shuf2, card1, card2, shuffled, shufflenum, location_in_deck_add 
 
-    if clickedlayer2 == " ":
+    if card2 == " ":
         pass
-    
+    elif card1 == card2:
+        card1 = " "
+        card2 = " "
     else:
-        # This fixes bug when the same card is clicked twice
-        if clickedlayer1[-1].get_val() != clickedlayer2[-1].get_val():
-            card1colour = clickedlayer1[-1].get_colour()
-            card2colour = clickedlayer2[-1].get_colour()
+        card1colour = card1.get_colour()
+        card2colour = card2.get_colour()
         
-            card1val = clickedlayer1[-1].get_val()
-            card2val = clickedlayer2[-1].get_val()
+        card1val = card1.get_val()
+        card2val = card2.get_val()
         
-            if layercolour_dic[card1colour] == card2colour:            
-                if layerval_dic[card1val] == card2val:
-                    clickedlayer2.append(clickedlayer1[-1])
-                    clickedlayer1.pop()
-                    clickedlayer1 = " "
-                    clickedlayer2 = " "
-                
-            elif layercolour_dic[card2colour] == card1colour:
-                if layerval_dic[card2val] == card1val:
-                    clickedlayer1.append(clickedlayer2[-1])
-                    clickedlayer2.pop()
-                    clickedlayer1 = " "
-                    clickedlayer2 = " "
-
-        
+        if layerval_dic[card1val] == card2val:
+            if layercolour_dic[card1colour] == card2colour:  
+                card2.get_location().append(card1)
+                card1.get_location().remove(card1)
+                card1.set_location(card2.get_location())
+                card1 = " "
+                card2 = " "
+               
+        else:
+            card1 = " "
+            card2 = " "
         
 def click_on_cards_from_deck():
-    global cards_shown, clickednum, x, y
+    global cards_shown, clickednum, x, y, shufflenum, layer_or_shuf1
+    global clickedlayer1, card1
     
     CARDWIDTH = 84 / 2
     CARDHEIGHT = 125 / 2
@@ -389,9 +387,8 @@ def click_on_cards_from_deck():
         
         DIST_BETWEEN = 100
         
-        for t in range(len(cards_shown)):
+        for selectedcard in range(len(cards_shown)):
             START_X += DIST_BETWEEN
-
 
             card_top = START_Y - CARDHEIGHT
             card_bot = START_Y + CARDHEIGHT
@@ -401,9 +398,12 @@ def click_on_cards_from_deck():
                         
             if card_left < x < card_right:
                 if card_top < y < card_bot:
-                    print "it works"
-
-                    
+                    if clickednum == 0:
+                        clickednum = 1
+                        card1 = cards_shown[selectedcard]
+                    elif clickednum == 1:
+                        clickednum = 0
+                        card2 = cards_shown[selectedcard]
 # Event Handlers
 
 def draw_handler(canvas):
@@ -427,7 +427,7 @@ def draw_handler(canvas):
     
     
 def mouse_handler(position):
-    global x, y, layer1, layer2, layer3, layer4, layer5, layer6, layer7
+    global x, y, layer1, layer2, layer3, layer4, layer5, layer6, layer7, card1, card2
     
     x = position[0]
     y = position[1]
@@ -442,9 +442,10 @@ def mouse_handler(position):
     check_if_click_on_layer(layer6, 6)
     check_if_click_on_layer(layer7, 7)
     
-    put_in_series()
-    
     click_on_cards_from_deck()
+    print card1
+    print card2
+    put_in_series()
     
 def button_handler():
     pass
@@ -452,7 +453,7 @@ def button_handler():
 # Make Frame
 frame = simplegui.create_frame('Solitaire', 1000, 850)
 frame.set_canvas_background('Green')
-restart = frame.add_button('Retart', button_handler, 50)
+restart = frame.add_button('Restart', button_handler, 60)
 
 
 # Call Event Handlers
