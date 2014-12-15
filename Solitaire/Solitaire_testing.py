@@ -407,7 +407,7 @@ def click_on_cards_from_deck():
                     
                     
 def moving_sets(layer, layernum):
-    global x, y 
+    global x, y, clickednum
     
     CARDWIDTH = 85 / 2
     CARDHEIGHT = 22
@@ -433,16 +433,21 @@ def moving_sets(layer, layernum):
         # Excludes when the player clicks numbers higher than the layers' defined card.
         # IE. clicking 22 above the top card returns -1
         
-        if cardnum >= 0 and cardnum < layernum - 1:
+        if layernum == 4:
+            print cardnum 
+        if cardnum > 0 and cardnum < layernum - 1:
             if bottomright_X > x > topleft_X:
                 if clickednum == 0:
+                    print "click works"
                     if layer[cardnum].get_exposed() == True:
+                        print "works"
                         card1 = layer[cardnum]
                         clickednum = 1
 
                         
                 elif clickednum == 1:
                     if layer[-1].get_exposed() == True:
+                        print "works"
                         card2 = layer[cardnum]
                         clickednum = 0
 
@@ -492,6 +497,8 @@ def mouse_handler(position):
     moving_sets(layer5, 5)
     moving_sets(layer6, 6)
     moving_sets(layer7, 7)
+    
+    click_on_cards_from_deck()
     
     print card1
     print card2
