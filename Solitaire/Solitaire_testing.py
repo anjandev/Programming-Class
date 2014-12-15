@@ -375,7 +375,7 @@ def put_in_series():
             card2 = " "
         
 def click_on_cards_from_deck():
-    global cards_shown, clickednum, x, y, shufflenum, layer_or_shuf1
+    global cards_shown, clickednum, x, y, shufflenum
     global clickedlayer1, card1
     
     CARDWIDTH = 84 / 2
@@ -404,6 +404,49 @@ def click_on_cards_from_deck():
                     elif clickednum == 1:
                         clickednum = 0
                         card2 = cards_shown[selectedcard]
+                    
+                    
+def moving_sets(layer, layernum):
+    global x, y 
+    
+    CARDWIDTH = 85 / 2
+    CARDHEIGHT = 22
+    
+    if len(layer) > 0:
+        DIST_FROM_LAST = 22
+        LOC_BACK_Y = 286
+        
+        LOC_BACK_Y = LOC_BACK_Y + DIST_FROM_LAST * (len(layer) - 1)
+        LOC_BACK_X = 100 * layernum
+        
+        topleft_X = LOC_BACK_X - CARDWIDTH
+        topleft_Y = LOC_BACK_Y - CARDHEIGHT
+        
+        bottomright_X = LOC_BACK_X + CARDWIDTH
+        bottomright_Y = LOC_BACK_Y + CARDHEIGHT
+        
+        cardnum = ((y - 25) - LOC_BACK_Y) // 25 + (layernum + 1)
+        # cardnum <  layernum - 1 
+        # Excludes the last card in the deck cause the user will never click the last card in a set
+        # to move said set
+        # cardnum >= 0
+        # Excludes when the player clicks numbers higher than the layers' defined card.
+        # IE. clicking 22 above the top card returns -1
+        
+        if cardnum >= 0 and cardnum < layernum - 1:
+            if bottomright_X > x > topleft_X:
+                if clickednum == 0:
+                    if layer[cardnum].get_exposed() == True:
+                        card1 = layer[cardnum]
+                        clickednum = 1
+
+                        
+                elif clickednum == 1:
+                    if layer[-1].get_exposed() == True:
+                        card2 = layer[cardnum]
+                        clickednum = 0
+
+                        
 # Event Handlers
 
 def draw_handler(canvas):
@@ -442,7 +485,14 @@ def mouse_handler(position):
     check_if_click_on_layer(layer6, 6)
     check_if_click_on_layer(layer7, 7)
     
-    click_on_cards_from_deck()
+    moving_sets(layer1, 1)
+    moving_sets(layer2, 2)
+    moving_sets(layer3, 3)
+    moving_sets(layer4, 4)
+    moving_sets(layer5, 5)
+    moving_sets(layer6, 6)
+    moving_sets(layer7, 7)
+    
     print card1
     print card2
     put_in_series()
