@@ -127,8 +127,6 @@ layercard5 = 0
 layercard6 = 0
 layercard7 = 0
 
-first_time = True
-
 # How many times the player has clicked the deck. So that 
 # the same 3 cards everytime together when they click the
 # deck unless they move something out the deck.
@@ -257,7 +255,7 @@ def draw_new_set_from_deck(canvas):
 
         
 def click_new_set_from_deck():
-    global x, y, location_in_deck, cards_shown, shuffled, first_time
+    global x, y, location_in_deck, cards_shown, shuffled
     
     TOPLEFTDECK_Y = 19
     TOPLEFTDECK_X = 59
@@ -274,37 +272,27 @@ def click_new_set_from_deck():
         if BOTTOMRIGHTDECK_Y > y > TOPLEFTDECK_Y:
                 
             cards_shown = []
-            
-            if first_time == True:
-                first_time == False
-                adding = 0
-                num_range = 3
+                
+            if location_in_deck + 3 <= len(shuffled):
+                adding = 3
+            elif location_in_deck + 2 <= len(shuffled):
+                adding = 2
+            elif location_in_deck + 1 <= len(shuffled):
+                adding = 1
             else:
+                location_in_deck = 0
+                adding = 0
+                cards_shown = []
                 
-                if location_in_deck + 3 < len(shuffled):
-                    adding = 3
-                    num_range = 2
-                elif location_in_deck + 2 < len(shuffled):
-                    adding = 2
-                    num_range = 1
-                elif location_in_deck + 1 < len(shuffled):
-                    adding = 1
-                    num_range = 0
-                else:
-                    location_in_deck = 0
-                    adding = 3
-                    num_range = 2
-                
-            location_in_deck = location_in_deck + adding
-           
+            print len(shuffled)
+                         
             # Add if else statement here when the feature to move cards
             # out of the deck is added. Potential bug
-            if location_in_deck != len(shuffled):
-                for x in range(num_range):
-                    cards_shown.append(shuffled[x + location_in_deck])
-                    cards_shown[x].set_exposed(True)
-
-    
+            for x in range(adding):
+                cards_shown.append(shuffled[x + location_in_deck])
+                cards_shown[x].set_exposed(True)
+                
+            location_in_deck = location_in_deck + adding
 
         
 def draw_card_back(canvas, LOC_BACK_X, LOC_BACK_Y):
