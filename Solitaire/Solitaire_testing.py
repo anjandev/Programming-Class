@@ -407,50 +407,41 @@ def click_on_cards_from_deck():
                     
                     
 def moving_sets(layer, layernum):
-    global x, y, clickednum
+    global x, y, clickednum, card1, card2
     
     CARDWIDTH = 85 / 2
-    CARDHEIGHT = 22
     
     if len(layer) > 0:
-        DIST_FROM_LAST = 22
-        LOC_BACK_Y = 286
+        DIST_FROM_LAST = 23
         
-        LOC_BACK_Y = LOC_BACK_Y + DIST_FROM_LAST * (len(layer) - 1)
+        
         LOC_BACK_X = 100 * layernum
-        
         topleft_X = LOC_BACK_X - CARDWIDTH
-        topleft_Y = LOC_BACK_Y - CARDHEIGHT
-        
         bottomright_X = LOC_BACK_X + CARDWIDTH
-        bottomright_Y = LOC_BACK_Y + CARDHEIGHT
         
-        cardnum = ((y - 25) - LOC_BACK_Y) // 25 + (layernum + 1)
-        # cardnum <  layernum - 1 
-        # Excludes the last card in the deck cause the user will never click the last card in a set
-        # to move said set
-        # cardnum >= 0
-        # Excludes when the player clicks numbers higher than the layers' defined card.
-        # IE. clicking 22 above the top card returns -1
+        bottom = 266
+        top = 244
         
-        if layernum == 4:
-            print cardnum 
-        if cardnum > 0 and cardnum < layernum - 1:
-            if bottomright_X > x > topleft_X:
-                if clickednum == 0:
-                    print "click works"
-                    if layer[cardnum].get_exposed() == True:
-                        print "works"
-                        card1 = layer[cardnum]
-                        clickednum = 1
-
+        if bottomright_X > x > topleft_X:
+            for cardloc in range((len(layer) - 1)):
+                
+                bottom = bottom + DIST_FROM_LAST * cardloc
+                if top > y > bottom: 
+                    print layer[cardloc]
+                    if clickednum == 0:
+                        #if layer[cardloc].get_exposed() == True:
+                            #print "works"
+                            #card1 = layer[cardloc]
+                            #print card1
+                            #clickednum = 1
                         
-                elif clickednum == 1:
-                    if layer[-1].get_exposed() == True:
-                        print "works"
-                        card2 = layer[cardnum]
-                        clickednum = 0
-
+                        #if layer[cardloc].get_exposed() == True:
+                            #print "works"
+                            #card2 = layer[cardnum]
+                            #print card2
+                            #clickednum = 0
+                     top = bottom
+            
                         
 # Event Handlers
 
@@ -500,8 +491,6 @@ def mouse_handler(position):
     
     click_on_cards_from_deck()
     
-    print card1
-    print card2
     put_in_series()
     
 def button_handler():
