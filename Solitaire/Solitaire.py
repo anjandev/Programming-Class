@@ -349,6 +349,7 @@ def check_if_click_on_layer(layer, layernum):
 def put_in_series():
     global clickedlayer1, clickedlayer2, layercolour_dic, layerval_dic, layer_or_shuf1
     global layer_or_shuf2, card1, card2, shuffled, shufflenum, location_in_deck_add 
+    global layer1, layer2, layer3, layer4, layer5, layer6, layer7
 
     if card2 == " ":
         pass
@@ -361,21 +362,33 @@ def put_in_series():
         
         card1val = card1.get_val()
         card2val = card2.get_val()
-        
         if layerval_dic[card1val] == card2val:
             if layercolour_dic[card1colour] == card2colour:  
-                card2.get_location().append(card1)
-                card1.get_location().remove(card1)
-                card1.set_location(card2.get_location())
-                card1 = " "
-                card2 = " "
+                if card1.get_location()[-1] != card1 and card1.get_location() != shuffled:
+                    set_to_append = []
+                    set_start = card1.get_location().index(card1)
+                    for card in range(len(card1.get_location()) - set_start):
+                        set_to_append.append(card1.get_location()[card + set_start])
+                        # sets location of the cards that are being moved
+                        card1.get_location()[card].set_location(card2.get_location())
+                        card1.get_location().pop(card + set_start)
+                        
+                    for card in range(len(set_to_append)):
+                        card2.get_location().append(set_to_append[card])
+                    
+                else:
+                    card2.get_location().append(card1)
+                    card1.get_location().remove(card1)
+                    card1.set_location(card2.get_location())
+                    card1 = " "
+                    card2 = " "
                
         else:
             card1 = " "
             card2 = " "
         
 def click_on_cards_from_deck():
-    global cards_shown, clickednum, x, y, shufflenum, layer_or_shuf1
+    global cards_shown, clickednum, x, y, shufflenum
     global clickedlayer1, card1
     
     CARDWIDTH = 84 / 2
@@ -404,6 +417,40 @@ def click_on_cards_from_deck():
                     elif clickednum == 1:
                         clickednum = 0
                         card2 = cards_shown[selectedcard]
+                    
+                    
+def moving_sets(layer, layernum):
+    global x, y, clickednum, card1, card2
+    
+    CARDWIDTH = 85 / 2
+    
+    if len(layer) > 0:
+        DIST_FROM_LAST = 26
+        
+        
+        LOC_BACK_X = 100 * layernum
+        left_X = LOC_BACK_X - CARDWIDTH
+        right_X = LOC_BACK_X + CARDWIDTH
+        
+        START_bottom = 266
+        START_top = 244
+        
+        if right_X > x > left_X:
+            for cardloc in range((len(layer) - 1)):
+                bottom = START_bottom + DIST_FROM_LAST * cardloc
+                top = START_top + DIST_FROM_LAST * cardloc
+                if top < y and y < bottom: 
+                    if clickednum == 0:
+                        if layer[cardloc].get_exposed() == True:
+                            card1 = layer[cardloc]
+                            clickednum = 1
+                            
+                    elif clickednum == 1:
+                        if layer[cardloc].get_exposed() == True:
+                            card2 = layer[cardloc]
+                            clickednum = 0
+            
+                        
 # Event Handlers
 
 def draw_handler(canvas):
@@ -442,9 +489,16 @@ def mouse_handler(position):
     check_if_click_on_layer(layer6, 6)
     check_if_click_on_layer(layer7, 7)
     
+    moving_sets(layer1, 1)
+    moving_sets(layer2, 2)
+    moving_sets(layer3, 3)
+    moving_sets(layer4, 4)
+    moving_sets(layer5, 5)
+    moving_sets(layer6, 6)
+    moving_sets(layer7, 7)
+    
     click_on_cards_from_deck()
-    print card1
-    print card2
+    
     put_in_series()
     
 def button_handler():
