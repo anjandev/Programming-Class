@@ -366,15 +366,21 @@ def put_in_series():
             if layercolour_dic[card1colour] == card2colour:  
                 if card1.get_location()[-1] != card1 and card1.get_location() != shuffled:
                     set_to_append = []
+                    
                     set_start = card1.get_location().index(card1)
-                    for card in range(len(card1.get_location()) - set_start):
-                        set_to_append.append(card1.get_location()[card + set_start])
+                    card1_location = card1.get_location()
+                    
+                    for card in range(len(card1_location) - set_start):
+                        set_to_append.append(card1_location[card + set_start])
                         # sets location of the cards that are being moved
-                        card1.get_location()[card].set_location(card2.get_location())
-                        card1.get_location().pop(card + set_start)
+                       
+                    for cards in set_to_append:
+                        card2.get_location().append(cards)
+                        card1_location.remove(cards)
+                        cards.set_location(card2.get_location())
                         
-                    for card in range(len(set_to_append)):
-                        card2.get_location().append(set_to_append[card])
+                    card1 = " "
+                    card2 = " "
                     
                 else:
                     card2.get_location().append(card1)
