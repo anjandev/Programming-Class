@@ -100,10 +100,10 @@ layer5 = []
 layer6 = []
 layer7 = []
 
+top0 = []
 top1 = []
 top2 = []
 top3 = []
-top4 = []
 
 location_in_deck_add = 3
 location_in_deck = 0
@@ -455,7 +455,56 @@ def moving_sets(layer, layernum):
                         if layer[cardloc].get_exposed() == True:
                             card2 = layer[cardloc]
                             clickednum = 0
+def click_on_top_layers():
+    global x, y, top0, top1, top2, top3
+    
+    CARDWIDTH = 84 / 2
+    CARDHEIGHT = 125 / 2
+    
+    START_X = 500
+    START_Y = 76
+        
+    DIST_BETWEEN = 100
+        
+    for tops in range(4):
             
+        START_X += DIST_BETWEEN
+
+        card_top = START_Y - CARDHEIGHT
+        card_bot = START_Y + CARDHEIGHT
+        
+        card_left = START_X - CARDWIDTH
+        card_right = START_X + CARDWIDTH
+                        
+        if card_left < x < card_right:
+            if card_top < y < card_bot:
+                print tops
+                    
+def draw_tops_back(canvas):
+    
+    SET = simplegui.load_image('http://i.imgur.com/MOQhHbc.png')
+    CARDWIDTH = SET.get_width()
+    CARDHEIGHT = SET.get_height()
+    DRAWSCALE = 1
+    
+    
+    CARDWIDTH = 84 / 2
+    CARDHEIGHT = 125 / 2
+    
+    START_X = 500
+    LOC_BACK_Y = 76
+        
+    DIST_BETWEEN = 100
+        
+    for tops in range(4):
+            
+        LOC_BACK_X =+ DIST_BETWEEN
+        
+        canvas.draw_image(SET, (CARDWIDTH /2 , CARDHEIGHT / 2), 
+                     (CARDWIDTH, CARDHEIGHT), 
+                     (LOC_BACK_X, LOC_BACK_Y), 
+                     (CARDWIDTH * DRAWSCALE, CARDHEIGHT * DRAWSCALE))
+                 
                         
 # Event Handlers
 
@@ -467,6 +516,7 @@ def draw_handler(canvas):
     LOC_BACK_Y = 75
     LOC_BACK_X = 100
     draw_card_back(canvas, LOC_BACK_X, LOC_BACK_Y)
+    draw_tops_back(canvas)
     
     drawlayer(layer1, 1, canvas)
     drawlayer(layer2, 2, canvas)
@@ -504,6 +554,7 @@ def mouse_handler(position):
     moving_sets(layer7, 7)
     
     click_on_cards_from_deck()
+    click_on_top_layers()
     
     put_in_series()
     
