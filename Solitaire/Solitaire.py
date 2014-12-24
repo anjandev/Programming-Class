@@ -83,7 +83,7 @@ class Card:
 layercolour_dic = {'red': 'black', 'black': 'red'}
 layerval_dic = {'Ace': '2', '2': '3', '3': '4', '4': '5', '5': '6', '6':'7',
                 '7':'8', '8':'9', '9': '10', '10': 'Joker', 'Joker' : 'Queen',
-                'Queen': 'King'}
+                'Queen': 'King', 'blank': 'Ace' }
 
 ranks = ("Ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Joker", "Queen", "King")
 suits = ("Diamonds", "Spades", "Hearts", "Clovers")
@@ -91,6 +91,7 @@ deck = []
 shuffled = []
 
 cards_shown = []
+set_to_append = []
 
 layer1 = []
 layer2 = []
@@ -99,6 +100,9 @@ layer4 = []
 layer5 = []
 layer6 = []
 layer7 = []
+
+# these have quotes as placeholders so the dictionary and functions know they
+# can append an ace
 
 top0 = []
 top1 = []
@@ -283,9 +287,7 @@ def click_new_set_from_deck():
                 location_in_deck = 0
                 adding = 0
                 cards_shown = []
-                
-            print len(shuffled)
-                         
+                                         
             # Add if else statement here when the feature to move cards
             # out of the deck is added. Potential bug
             for x in range(adding):
@@ -331,17 +333,15 @@ def check_if_click_on_layer(layer, layernum):
         
         if bottomright_X > x > topleft_X:
             if bottomright_Y > y > topleft_Y:
-                if clickednum == 0:
+                if card1 == " ":
                     if layer[-1].get_exposed() == True:
                         card1 = layer[-1]
-                        clickednum = 1
                     else:
                         layer[-1].set_exposed(True)
                         
-                elif clickednum == 1:
+                elif card2 == " ":
                     if layer[-1].get_exposed() == True:
                         card2 = layer[-1]
-                        clickednum = 0
                     else:
                         layer[-1].set_exposed(True)
 
@@ -349,11 +349,14 @@ def check_if_click_on_layer(layer, layernum):
 def put_in_series():
     global clickedlayer1, clickedlayer2, layercolour_dic, layerval_dic, layer_or_shuf1
     global layer_or_shuf2, card1, card2, shuffled, shufflenum, location_in_deck_add 
-    global layer1, layer2, layer3, layer4, layer5, layer6, layer7
+    global layer1, layer2, layer3, layer4, layer5, layer6, layer7, set_to_append
 
     if card2 == " ":
         pass
-    elif card1 == card2:
+    elif card1 == str(card1):
+        pass
+    # fixes bug where if two kings are clicked the game crashes.
+    elif card1.get_val() == card2.get_val():
         card1 = " "
         card2 = " "
     else:
@@ -365,15 +368,8 @@ def put_in_series():
         if layerval_dic[card1val] == card2val:
             if layercolour_dic[card1colour] == card2colour:  
                 if card1.get_location()[-1] != card1 and card1.get_location() != shuffled:
-                    set_to_append = []
-                    
-                    set_start = card1.get_location().index(card1)
                     card1_location = card1.get_location()
                     
-                    for card in range(len(card1_location) - set_start):
-                        set_to_append.append(card1_location[card + set_start])
-                        # sets location of the cards that are being moved
-                       
                     for cards in set_to_append:
                         card2.get_location().append(cards)
                         card1_location.remove(cards)
@@ -389,13 +385,10 @@ def put_in_series():
                     card1 = " "
                     card2 = " "
                
-        else:
-            card1 = " "
-            card2 = " "
         
 def click_on_cards_from_deck():
     global cards_shown, clickednum, x, y, shufflenum
-    global clickedlayer1, card1
+    global clickedlayer1, card1, card2
     
     CARDWIDTH = 84 / 2
     CARDHEIGHT = 125 / 2
@@ -417,16 +410,14 @@ def click_on_cards_from_deck():
                         
             if card_left < x < card_right:
                 if card_top < y < card_bot:
-                    if clickednum == 0:
-                        clickednum = 1
+                    if card1 == " ":
                         card1 = cards_shown[selectedcard]
-                    elif clickednum == 1:
-                        clickednum = 0
+                    elif card2 == " ":
                         card2 = cards_shown[selectedcard]
                     
                     
 def moving_sets(layer, layernum):
-    global x, y, clickednum, card1, card2
+    global x, y, clickednum, card1, card2, set_to_append
     
     CARDWIDTH = 85 / 2
     
@@ -446,17 +437,29 @@ def moving_sets(layer, layernum):
                 bottom = START_bottom + DIST_FROM_LAST * cardloc
                 top = START_top + DIST_FROM_LAST * cardloc
                 if top < y and y < bottom: 
-                    if clickednum == 0:
+                    if card1 == " ":
                         if layer[cardloc].get_exposed() == True:
                             card1 = layer[cardloc]
-                            clickednum = 1
+                            set_to_append = []
+                    
+                            set_start = card1.get_location().index(card1)
+                            card1_location = card1.get_location()
+                    
+                            for card in range(len(card1_location) - set_start):
+                                set_to_append.append(card1_location[card + set_start])
+                                # sets location of the cards that are being moved
+                       
                             
-                    elif clickednum == 1:
+                    elif card2 == " ":
                         if layer[cardloc].get_exposed() == True:
                             card2 = layer[cardloc]
-                            clickednum = 0
-def click_on_top_layers():
-    global x, y, top0, top1, top2, top3
+                            # bug here
+
+                            
+def move_to_top_layers():
+    global x, y, top0, top1, top2, top3, card1, card2, layerval_dic
+    global shuffled, layer1, layer2, layer3, layer4, layer5, layer6 
+    global layer7, cards_shown
     
     CARDWIDTH = 84 / 2
     CARDHEIGHT = 125 / 2
@@ -465,46 +468,128 @@ def click_on_top_layers():
     START_Y = 76
         
     DIST_BETWEEN = 100
-        
-    for tops in range(4):
+    
+    tops = [top0, top1, top2, top3]
             
-        START_X += DIST_BETWEEN
+    for numtop in range(len(tops)):
+        X_CARD_MID = START_X + DIST_BETWEEN * numtop
 
         card_top = START_Y - CARDHEIGHT
         card_bot = START_Y + CARDHEIGHT
         
-        card_left = START_X - CARDWIDTH
-        card_right = START_X + CARDWIDTH
+        card_left = X_CARD_MID - CARDWIDTH
+        card_right = X_CARD_MID + CARDWIDTH
+        
+        if card1 == " " and card2 == " ":
+            break
+        if card_left < x and x < card_right:
+            if card_top < y and y < card_bot: 
+                if card2 == " " and card1 != " ":
+                    card2 = card1
+                    card1 = " "
                         
-        if card_left < x < card_right:
-            if card_top < y < card_bot:
-                print tops
+                card2colour = card2.get_colour()
+                card2val = card2.get_val()
+                                
+                if len(tops[numtop]) == 0:
+                    card1val = 'blank'
+                    card1colour = card2.get_colour()
+                else:
+                    card1 = tops[numtop][-1]
+                    card1colour = card1.get_colour()
+                    card1val = card1.get_val()
+                
+                if layerval_dic[card1val] == card2val:
+                    if card1colour == card2colour: 
+                        tops[numtop].append(card2)
+                        card2.get_location().remove(card2)
+                        card2.set_location(tops[numtop])
+                        if card2 in cards_shown:
+                            cards_shown.remove(card2)
+                        elif card1 in cards_shown:
+                            cards_shown.remove(card1)
+                        card1 = " "
+                        card2 = " "
+                
+def clear_cards():
+    global card1, card2
+    
+    if card1 != " " and card2 != " ":
+        card1 = " "
+        card2 = " "
                     
-def draw_tops_back(canvas):
+def draw_tops(canvas):
+    global top0, top1, top2, top3
     
-    SET = simplegui.load_image('http://i.imgur.com/MOQhHbc.png')
-    CARDWIDTH = SET.get_width()
-    CARDHEIGHT = SET.get_height()
-    DRAWSCALE = 1
+    TOPBACK = simplegui.load_image('http://i.imgur.com/MOQhHbc.png')
+    CARDWIDTH = TOPBACK.get_width()
+    CARDHEIGHT = TOPBACK.get_height()
+    DRAWSCALE = 1.1
     
-    
-    CARDWIDTH = 84 / 2
-    CARDHEIGHT = 125 / 2
-    
-    START_X = 500
     LOC_BACK_Y = 76
         
+    START_X = 500
     DIST_BETWEEN = 100
-        
+    
+    top_dict = [top0, top1, top2, top3]  
+    
     for tops in range(4):
             
-        LOC_BACK_X =+ DIST_BETWEEN
+        LOC_BACK_X =START_X + DIST_BETWEEN * tops
         
-        canvas.draw_image(SET, (CARDWIDTH /2 , CARDHEIGHT / 2), 
+        canvas.draw_image(TOPBACK, (CARDWIDTH /2 , CARDHEIGHT / 2), 
                      (CARDWIDTH, CARDHEIGHT), 
                      (LOC_BACK_X, LOC_BACK_Y), 
-                     (CARDWIDTH * DRAWSCALE, CARDHEIGHT * DRAWSCALE))
-                 
+                     (CARDWIDTH * DRAWSCALE, CARDHEIGHT * DRAWSCALE))        
+        
+        if len(top_dict[tops]) > 0: 
+            top_dict[tops][-1].set_X(LOC_BACK_X)
+            top_dict[tops][-1].set_Y(LOC_BACK_Y)
+            
+            SET = top_dict[tops][-1].exposedimg
+            CARD_SPOT_IN_SETIMG = top_dict[tops][-1].cardnum
+            top_dict[tops][-1].get_cardfront(canvas)
+
+            
+def move_to_empty_layer():
+    global layer1, layer2, layer3, layer4, layer5, layer6, layer7
+    global set_to_append, card1, card2
+    
+    layers = [layer1, layer2, layer3, layer4, layer5, layer6, layer7]
+    
+    for layernum in range(len(layers)):
+        LOC_BACK_X = 100 + 100 * layernum
+        LOC_BACK_Y = 300
+        
+        CARDWIDTH = 84 / 2
+        CARDHEIGHT = 125 / 2
+        
+        topleft_X = LOC_BACK_X - CARDWIDTH
+        topleft_Y = LOC_BACK_Y - CARDHEIGHT
+        
+        bottomright_X = LOC_BACK_X + CARDWIDTH
+        bottomright_Y = LOC_BACK_Y + CARDHEIGHT
+        
+        if topleft_X < x < bottomright_X:
+            if topleft_Y < y < bottomright_Y:
+                if len(layers[layernum]) == 0:
+                    if len(set_to_append) == 0:
+                        layers[layernum].append(card1)
+                        card1.get_location().remove(card1)
+                        card1.set_location(layers[layernum])
+                        card1 = " "
+                        card2 = " "
+                    else:
+                        card1location = set_to_append[0].get_location()
+                        
+                        for card in set_to_append:
+                            layers[layernum].append(card)
+                            card1location.remove(card)
+                            card.set_location(layers[layernum])
+                        card1 = " "
+                        card2 = " "
+                        set_to_append = []
+            
                         
 # Event Handlers
 
@@ -516,7 +601,8 @@ def draw_handler(canvas):
     LOC_BACK_Y = 75
     LOC_BACK_X = 100
     draw_card_back(canvas, LOC_BACK_X, LOC_BACK_Y)
-    draw_tops_back(canvas)
+    
+    draw_tops(canvas)
     
     drawlayer(layer1, 1, canvas)
     drawlayer(layer2, 2, canvas)
@@ -554,9 +640,12 @@ def mouse_handler(position):
     moving_sets(layer7, 7)
     
     click_on_cards_from_deck()
-    click_on_top_layers()
     
+    move_to_top_layers()
+
     put_in_series()
+    move_to_empty_layer()
+    clear_cards()
     
 def button_handler():
     pass
