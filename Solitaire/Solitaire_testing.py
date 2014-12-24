@@ -524,7 +524,7 @@ def draw_tops(canvas):
     TOPBACK = simplegui.load_image('http://i.imgur.com/MOQhHbc.png')
     CARDWIDTH = TOPBACK.get_width()
     CARDHEIGHT = TOPBACK.get_height()
-    DRAWSCALE = 1
+    DRAWSCALE = 1.1
     
     LOC_BACK_Y = 76
         
@@ -579,6 +579,16 @@ def move_to_empty_layer():
                         card1.set_location(layers[layernum])
                         card1 = " "
                         card2 = " "
+                    else:
+                        card1location = set_to_append[0].get_location()
+                        
+                        for card in set_to_append:
+                            layers[layernum].append(card)
+                            card1location.remove(card)
+                            card.set_location(layers[layernum])
+                        card1 = " "
+                        card2 = " "
+                        set_to_append = []
             
                         
 # Event Handlers
