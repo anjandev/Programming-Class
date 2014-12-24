@@ -80,6 +80,8 @@ class Card:
 
    
 # Global variables
+# logic dictionaries so program knows whether it can put two cards in the same
+# layer, top, etc
 layercolour_dic = {'red': 'black', 'black': 'red'}
 layerval_dic = {'Ace': '2', '2': '3', '3': '4', '4': '5', '5': '6', '6':'7',
                 '7':'8', '8':'9', '9': '10', '10': 'Joker', 'Joker' : 'Queen',
@@ -87,6 +89,7 @@ layerval_dic = {'Ace': '2', '2': '3', '3': '4', '4': '5', '5': '6', '6':'7',
 
 ranks = ("Ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Joker", "Queen", "King")
 suits = ("Diamonds", "Spades", "Hearts", "Clovers")
+
 deck = []
 shuffled = []
 
@@ -101,9 +104,6 @@ layer5 = []
 layer6 = []
 layer7 = []
 
-# these have quotes as placeholders so the dictionary and functions know they
-# can append an ace
-
 top0 = []
 top1 = []
 top2 = []
@@ -114,27 +114,12 @@ location_in_deck = 0
 
 x = 0
 y = 0
-clickednum = 0
+
 card1 = " "
 card2 = " "
-shufflenum = 0
 
-deckcard1 = 0
-deckcard2 = 0
-deckcard3 = 0
-
-layercard1 = 0
-layercard2 = 0
-layercard3 = 0
-layercard4 = 0
-layercard5 = 0
-layercard6 = 0
-layercard7 = 0
-
-# How many times the player has clicked the deck. So that 
-# the same 3 cards everytime together when they click the
-# deck unless they move something out the deck.
-timesdecked = 0
+CARDWIDTH = 85 / 2
+CARDHEIGHT = 125 / 2
 
 spadesimg = simplegui.load_image("http://i.imgur.com/soZWEII.png")
 diamondsimg = simplegui.load_image("http://i.imgur.com/rjCP3uF.png")
@@ -186,6 +171,8 @@ def main():
     
     
 def assign_loc(numofcards, layer, name_of_layer):
+    # Initializing function
+    # Assigns each card to a layer. 
     global shuffled, Cards
     
     for x in range(numofcards):
@@ -196,6 +183,8 @@ def assign_loc(numofcards, layer, name_of_layer):
 
       
 def makedeck():
+    # Initializing function
+    # Makes cards so I dont have to write out each of the 52 cards.
     global ranks, suits, deck, shuffled
     
     for suit in suits:
@@ -204,6 +193,8 @@ def makedeck():
            
             
 def definecards(deckstart, suit, setimg, colour):
+    # Initializing function
+    # Defines all of the 52 cards to it's own class
     global deck, ranks
    
     for x in range(13):
@@ -212,6 +203,8 @@ def definecards(deckstart, suit, setimg, colour):
         
 def shuffle():
     global deck, shuffled
+    # Initializing function
+    # Shuffles deck.
     
     for card in deck:
         shuffled.append(card)
@@ -219,6 +212,8 @@ def shuffle():
 
     
 def drawlayer(layer, layernum, canvas):
+    # GUI function
+    # Draws each of the layers.
     
     for card in range(len(layer)):
         
@@ -245,7 +240,54 @@ def drawlayer(layer, layernum, canvas):
             layer[card].get_cardfront(canvas)
 
             
-def draw_new_set_from_deck(canvas):
+def assign_new_cards_to_show_from_deck():
+    # GUI Backend Function
+    # Adds cards from the deck to cards_show list. 
+    # Since two functions need to know what cards are shown from the deck
+    #(drawing shown cards and selecting shown cards) this must be a seperate modular function.
+    global x, y, location_in_deck, cards_shown, shuffled
+    
+    TOPLEFTDECK_Y = 19
+    TOPLEFTDECK_X = 59
+    
+    BOTTOMRIGHTDECK_Y = 131
+    BOTTOMRIGHTDECK_X = 143
+    
+        
+    # Check if player has clicked on the deck
+    if BOTTOMRIGHTDECK_X > x > TOPLEFTDECK_X:
+        if BOTTOMRIGHTDECK_Y > y > TOPLEFTDECK_Y:
+                
+            cards_shown = []
+            # Since the number of cards in deck are changing (because we are taking 
+            # them out. The len(cards_shown) will not always be a multiple of 3. 
+            # Therefore, we must adapt how many cards we add to cards_shown 
+            # in order to ensure that we dont cause an error to show.
+            
+            if location_in_deck + 3 <= len(shuffled):
+                adding = 3
+            elif location_in_deck + 2 <= len(shuffled):
+                adding = 2
+            elif location_in_deck + 1 <= len(shuffled):
+                adding = 1
+            else:
+                location_in_deck = 0
+                adding = 0
+                cards_shown = []
+                                         
+            for x in range(adding):
+                cards_shown.append(shuffled[x + location_in_deck])
+                cards_shown[x].set_exposed(True)
+            
+            # location in deck keeps track of where we are in the deck. Ie. When after
+            # we run this function once we will no longer wanna show the first 3 cards
+            # again but instead show the 3 cards after the first 3 cards.
+            location_in_deck = location_in_deck + adding          
+            
+            
+def show_new_cards_from_deck (canvas):
+    # GUI function
+    # Draws each card from the cards_shown list.
     global cards_shown
     
     LOC_BACK_X = 100
@@ -258,47 +300,10 @@ def draw_new_set_from_deck(canvas):
         cards_shown[card].set_Y(LOC_BACK_Y)
 
         
-def click_new_set_from_deck():
-    global x, y, location_in_deck, cards_shown, shuffled
-    
-    TOPLEFTDECK_Y = 19
-    TOPLEFTDECK_X = 59
-    
-    BOTTOMRIGHTDECK_Y = 131
-    BOTTOMRIGHTDECK_X = 143
-    
-    LOC_BACK_Y = 75
-    LOC_BACK_X = 100 
-    
-        
-    # Check if player has clicked on the deck
-    if BOTTOMRIGHTDECK_X > x > TOPLEFTDECK_X:
-        if BOTTOMRIGHTDECK_Y > y > TOPLEFTDECK_Y:
-                
-            cards_shown = []
-                
-            if location_in_deck + 3 <= len(shuffled):
-                adding = 3
-            elif location_in_deck + 2 <= len(shuffled):
-                adding = 2
-            elif location_in_deck + 1 <= len(shuffled):
-                adding = 1
-            else:
-                location_in_deck = 0
-                adding = 0
-                cards_shown = []
-                                         
-            # Add if else statement here when the feature to move cards
-            # out of the deck is added. Potential bug
-            for x in range(adding):
-                cards_shown.append(shuffled[x + location_in_deck])
-                cards_shown[x].set_exposed(True)
-                
-            location_in_deck = location_in_deck + adding
-
-        
 def draw_card_back(canvas, LOC_BACK_X, LOC_BACK_Y):
-    
+    # GUI function
+    # If a card is not supposed to be exposed this function is called. It draws a 
+    # simple graphic of a card back. 
     SET = simplegui.load_image('http://i.imgur.com/p6hCw9U.png')
     CARDWIDTH = SET.get_width()
     CARDHEIGHT = SET.get_height()
@@ -310,14 +315,12 @@ def draw_card_back(canvas, LOC_BACK_X, LOC_BACK_Y):
                      (CARDWIDTH * DRAWSCALE, CARDHEIGHT * DRAWSCALE))
 
 
-def check_if_click_on_layer(layer, layernum):
-    global y, x, clickedlayer1, clickednum, clickedlayer2
-    global clickedlayernum1, clickedlayernum2, layer_or_shuf1, layer_or_shuf2
-    global card1, card2
-    
-    CARDWIDTH = 85 / 2
-    CARDHEIGHT = 125 / 2
-    
+def click_on_last_card_in_layer(layer, layernum):
+    # GUI Backend Function
+    # Checks if user has clicked the last card in the layer as specified 
+    # and assigns card1 or card2 to the card selected by user.
+    global y, x, card1, card2, CARDWIDTH, CARDHEIGHT
+
     if len(layer) > 0:
         DIST_FROM_LAST = 25
         LOC_BACK_Y = 277
@@ -346,13 +349,16 @@ def check_if_click_on_layer(layer, layernum):
                         layer[-1].set_exposed(True)
 
     
-def put_in_series():
-    global clickedlayer1, clickedlayer2, layercolour_dic, layerval_dic, layer_or_shuf1
-    global layer_or_shuf2, card1, card2, shuffled, shufflenum, location_in_deck_add 
+def check_if_2_cards_compatible():
+    # GUI Backend Function
+    # Checks if the two cards the user has selected are compatible.
+    global layercolour_dic, layerval_dic, card1, card2, shuffled 
     global layer1, layer2, layer3, layer4, layer5, layer6, layer7, set_to_append
 
     if card2 == " ":
         pass
+    # I honestly don't know what this does but Im too scared that Itll  break 
+    # my program if I take it out.
     elif card1 == str(card1):
         pass
     # fixes bug where if two kings are clicked the game crashes.
@@ -365,8 +371,12 @@ def put_in_series():
         
         card1val = card1.get_val()
         card2val = card2.get_val()
+        
         if layerval_dic[card1val] == card2val:
             if layercolour_dic[card1colour] == card2colour:  
+                # This if else statement checks if the user is trying to move multiple 
+                # cards or just one card. If multiple cards are needing to be moved
+                # the following function is played.
                 if card1.get_location()[-1] != card1 and card1.get_location() != shuffled:
                     card1_location = card1.get_location()
                     
@@ -377,7 +387,7 @@ def put_in_series():
                         
                     card1 = " "
                     card2 = " "
-                    
+                # If only one card is needing to be moved the following function is played.    
                 else:
                     card2.get_location().append(card1)
                     card1.get_location().remove(card1)
@@ -387,11 +397,10 @@ def put_in_series():
                
         
 def click_on_cards_from_deck():
-    global cards_shown, clickednum, x, y, shufflenum
-    global clickedlayer1, card1, card2
-    
-    CARDWIDTH = 84 / 2
-    CARDHEIGHT = 125 / 2
+    # GUI Backend Function
+    # Checks if cards shown from the deck are clicked and selects them 
+    # for checking for compatibility
+    global cards_shown, x, y, card1, card2, CARDWIDTH, CARDHEIGHT
     
     if len(cards_shown) > 0:
         START_X = 101
@@ -417,13 +426,14 @@ def click_on_cards_from_deck():
                     
                     
 def moving_sets(layer, layernum):
-    global x, y, clickednum, card1, card2, set_to_append
-    
-    CARDWIDTH = 85 / 2
+    # GUI Backend Function
+    # Only the top of each exposed card is shown when put into a set. This function 
+    # checks if the tops of each exposed card is clicked and puts the cards in that set
+    # into it's own list so other functions can manipulate it.
+    global x, y, card1, card2, set_to_append, CARDWIDTH
     
     if len(layer) > 0:
         DIST_FROM_LAST = 26
-        
         
         LOC_BACK_X = 100 * layernum
         left_X = LOC_BACK_X - CARDWIDTH
@@ -433,6 +443,8 @@ def moving_sets(layer, layernum):
         START_top = 244
         
         if right_X > x > left_X:
+            # Finds which card has been clicked and excludes the last card since
+            # we have a seperate function for moving one card to one card.
             for cardloc in range((len(layer) - 1)):
                 bottom = START_bottom + DIST_FROM_LAST * cardloc
                 top = START_top + DIST_FROM_LAST * cardloc
@@ -447,16 +459,17 @@ def moving_sets(layer, layernum):
                     
                             for card in range(len(card1_location) - set_start):
                                 set_to_append.append(card1_location[card + set_start])
-                                # sets location of the cards that are being moved
                        
-                            
-                    elif card2 == " ":
-                        if layer[cardloc].get_exposed() == True:
-                            card2 = layer[cardloc]
-                            # bug here
+                    # DELETE THIS. OR BUG        
+                    #elif card2 == " ":
+                        #if layer[cardloc].get_exposed() == True:
+                            #card2 = layer[cardloc]
 
                             
 def move_to_top_layers():
+    # GUI Backend Function
+    # Takes a card that the user wishes to move to a top, checks if that card is compatible 
+    # with the last card in the top and appends it to that top if compatible. 
     global x, y, top0, top1, top2, top3, card1, card2, layerval_dic
     global shuffled, layer1, layer2, layer3, layer4, layer5, layer6 
     global layer7, cards_shown
@@ -482,6 +495,7 @@ def move_to_top_layers():
         
         if card1 == " " and card2 == " ":
             break
+            
         if card_left < x and x < card_right:
             if card_top < y and y < card_bot: 
                 if card2 == " " and card1 != " ":
@@ -512,13 +526,19 @@ def move_to_top_layers():
                         card2 = " "
                 
 def clear_cards():
-    global card1, card2
+    # Backend Function
+    # clears selected cards and set to append at the end if they are found to not be 
+    # compatible
+    global card1, card2, set_to_append
     
     if card1 != " " and card2 != " ":
         card1 = " "
         card2 = " "
+    set_to_append = []
                     
 def draw_tops(canvas):
+    # GUI function
+    # Draws black squares to represent tops and also draws the last card in that top
     global top0, top1, top2, top3
     
     TOPBACK = simplegui.load_image('http://i.imgur.com/MOQhHbc.png')
@@ -552,6 +572,8 @@ def draw_tops(canvas):
 
             
 def move_to_empty_layer():
+    # GUI backend function
+    # Allows user to move a set or a card to an empty layer.
     global layer1, layer2, layer3, layer4, layer5, layer6, layer7
     global set_to_append, card1, card2
     
@@ -612,7 +634,7 @@ def draw_handler(canvas):
     drawlayer(layer6, 6, canvas)
     drawlayer(layer7, 7, canvas)
     
-    draw_new_set_from_deck(canvas)
+    show_new_cards_from_deck(canvas)
     
     
 def mouse_handler(position):
@@ -621,15 +643,15 @@ def mouse_handler(position):
     x = position[0]
     y = position[1]
     
-    click_new_set_from_deck()
+    assign_new_cards_to_show_from_deck()
     
-    check_if_click_on_layer(layer1, 1)
-    check_if_click_on_layer(layer2, 2)
-    check_if_click_on_layer(layer3, 3)
-    check_if_click_on_layer(layer4, 4)
-    check_if_click_on_layer(layer5, 5)
-    check_if_click_on_layer(layer6, 6)
-    check_if_click_on_layer(layer7, 7)
+    click_on_last_card_in_layer(layer1, 1)
+    click_on_last_card_in_layer(layer2, 2)
+    click_on_last_card_in_layer(layer3, 3)
+    click_on_last_card_in_layer(layer4, 4)
+    click_on_last_card_in_layer(layer5, 5)
+    click_on_last_card_in_layer(layer6, 6)
+    click_on_last_card_in_layer(layer7, 7)
     
     moving_sets(layer1, 1)
     moving_sets(layer2, 2)
@@ -643,7 +665,7 @@ def mouse_handler(position):
     
     move_to_top_layers()
 
-    put_in_series()
+    check_if_2_cards_compatible()
     move_to_empty_layer()
     clear_cards()
     
