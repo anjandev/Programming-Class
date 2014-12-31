@@ -1,5 +1,6 @@
 # Solitaire Game by Anjan Momi
 # Link to sets http://imgur.com/dEoEdBG,rjCP3uF,HfL7T9o,B0PojjI
+
 # THIS GAME HAS UNSOLVABLE BUGS. PLEASE READ THIS:
 # https://github.com/anjandev/Programming-Class/wiki/Solitaire
 
@@ -630,9 +631,12 @@ def draw_handler(canvas):
     global DRAWSCALE, deck, cards_shown
     
     # Drawing Deck
-    LOC_BACK_Y = 75
-    LOC_BACK_X = 100
-    draw_card_back(canvas, LOC_BACK_X, LOC_BACK_Y)
+    if len(shuffled) == 0:
+        pass
+    else:
+        LOC_BACK_Y = 75
+        LOC_BACK_X = 100
+        draw_card_back(canvas, LOC_BACK_X, LOC_BACK_Y)
     
     draw_tops(canvas)
     
