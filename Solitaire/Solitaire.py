@@ -1,6 +1,6 @@
 # Solitaire Game by Anjan Momi
-# Link to sets http://imgur.com/dEoEdBG,rjCP3uF,HfL7T9o,B0PojjI
-
+# THIS GAME HAS UNSOLVABLE BUGS. PLEASE READ THIS:
+# https://github.com/anjandev/Programming-Class/wiki/Solitaire
 
 import simplegui
 import random
@@ -25,6 +25,9 @@ class Card:
     # Getters
     def get_exposed(self):
         return self.exposed
+    
+    def get_name(self):
+        return str(self.value) + " of " + str(self.suit)
     
     def get_exposedimg(self):
         return self.exposedimg
@@ -129,6 +132,7 @@ y = 0
 # Holds the first and second card that was clicked by the user
 card1 = " "
 card2 = " "
+
 
 spadesimg = simplegui.load_image("http://i.imgur.com/soZWEII.png")
 diamondsimg = simplegui.load_image("http://i.imgur.com/rjCP3uF.png")
@@ -409,6 +413,7 @@ def check_cards_and_move():
     # then it moves all the cards in the set to card2's location
     global layercolour_dic, layerval_dic, card1, card2, shuffled 
     global layer1, layer2, layer3, layer4, layer5, layer6, layer7, set_to_append
+    global cards_shown
 
     if card2 == " ":
         pass
@@ -437,11 +442,15 @@ def check_cards_and_move():
                         
                     card1 = " "
                     card2 = " "
+                    set_to_append = []
                     
                 else:
                     card2.get_location().append(card1)
                     card1.get_location().remove(card1)
                     card1.set_location(card2.get_location())
+                    if card1 in cards_shown:
+                        cards_shown.remove(card1)
+                        
                     card1 = " "
                     card2 = " "
                
@@ -596,8 +605,9 @@ def move_to_empty_layer():
         
         bottomright_X = LOC_BACK_X + CARDWIDTH
         bottomright_Y = LOC_BACK_Y + CARDHEIGHT
-        
-        if topleft_X < x < bottomright_X:
+        if card1 == " ":
+            pass
+        elif topleft_X < x < bottomright_X:
             if topleft_Y < y < bottomright_Y:
                 if len(layers[layernum]) == 0:
                     if len(set_to_append) == 0:
@@ -627,6 +637,12 @@ def clear_cards():
     if card1 != " " and card2 != " ":
         card1 = " "
         card2 = " "
+        
+def check_if_win(canvas):
+    global top0, top1, top2, top3
+    
+    if len(top0) == 13 and len(top1) == 13 and len(top2) == 13 and len(top3) == 13:
+        canvas.draw_text("You win!", [275,575],60, "black")
 ### END OF Clicking/Backend function helpers ###    
 
     
@@ -652,6 +668,10 @@ def draw_handler(canvas):
     
     draw_shown_cards(canvas)
     
+    if card1 != " ":
+        canvas.draw_text("Card1: " + card1.get_name(), [275,700],20, "black")
+    
+    check_if_win(canvas)
     
 def mouse_handler(position):
     global x, y, layer1, layer2, layer3, layer4, layer5, layer6, layer7, card1, card2
@@ -684,6 +704,7 @@ def mouse_handler(position):
     check_cards_and_move()
     move_to_empty_layer()
     clear_cards()
+    
     
 # Make Frame
 frame = simplegui.create_frame('Solitaire', 1000, 850)
