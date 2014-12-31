@@ -1,6 +1,8 @@
 # Solitaire Game by Anjan Momi
+# Link to sets http://imgur.com/dEoEdBG,rjCP3uF,HfL7T9o,B0PojjI
 # THIS GAME HAS UNSOLVABLE BUGS. PLEASE READ THIS:
 # https://github.com/anjandev/Programming-Class/wiki/Solitaire
+
 
 import simplegui
 import random
@@ -8,7 +10,9 @@ import random
 # Classes
 class Card:
 
-    def __init__(self, location, suit, value, exposed, exposedimg, cardnum, colour, LOC_BACK_X, LOC_BACK_Y):
+    def __init__(self, location, suit, value, exposed, exposedimg, cardnum, 
+                 colour, LOC_BACK_X, LOC_BACK_Y):
+                 
         self.location = location
         self.suit = suit
         self.value = value
@@ -26,20 +30,11 @@ class Card:
     def get_exposed(self):
         return self.exposed
     
-    def get_name(self):
-        return str(self.value) + " of " + str(self.suit)
-    
     def get_exposedimg(self):
         return self.exposedimg
     
     def get_cardnum(self):
         return self.cardnum
-    
-    def get_LOC_BACK_X(self):
-        return self.LOC_BACK_X
-    
-    def get_LOC_BACK_Y(self):
-        return self.LOC_BACK_Y
     
     def get_colour(self):
         return self.colour
@@ -53,6 +48,9 @@ class Card:
     def get_suit(self):
         return self.suit
     
+    def get_name(self):
+        return str(self.value) + " of " + str(self.suit)
+
     def get_cardfront(self, canvas):
         
         CARDWIDTH = 167
@@ -62,7 +60,6 @@ class Card:
         CARD_SPOT_IN_SETIMG = self.cardnum
         LOC_BACK_X = self.LOC_BACK_X
         LOC_BACK_Y = self.LOC_BACK_Y
-        
         SET = self.exposedimg
             
         return canvas.draw_image(SET, (CARDWIDTH / 2 + CARDWIDTH * CARD_SPOT_IN_SETIMG, CARDHEIGHT / 2), 
@@ -71,7 +68,6 @@ class Card:
                      (CARDWIDTH * DRAWSCALE, CARDHEIGHT * DRAWSCALE))
     
     # Setters
-    
     def set_location(self, location):
         self.location = location
         
@@ -133,7 +129,6 @@ y = 0
 card1 = " "
 card2 = " "
 
-
 spadesimg = simplegui.load_image("http://i.imgur.com/soZWEII.png")
 diamondsimg = simplegui.load_image("http://i.imgur.com/rjCP3uF.png")
 heartsimg = simplegui.load_image("http://i.imgur.com/HfL7T9o.png")
@@ -143,8 +138,7 @@ cloversimg = simplegui.load_image("http://i.imgur.com/dEoEdBG.png")
 # Helper Functions
 def main():
     # This function holds all the functions needed to initialize the game.
-    global deck, shuffled, diamonds, spades, hearts, clovers
-    global layer1, layer2, layer3, layer4, layer5, layer6
+    global deck, shuffled, layer1, layer2, layer3, layer4, layer5, layer6
     global layer7, spadesimg, diamondsimg, heartsimg, cloversimg
     
     makedeck()
@@ -230,11 +224,9 @@ def assign_loc(numofcards, layer, name_of_layer):
         shuffled.pop(0)
 #### END OF Main function helpers ####
      
-### Drawing function helpers ###
-
+### Drawing function helpers ###=
 def draw_card_back(canvas, LOC_BACK_X, LOC_BACK_Y):
     # returns a graphic that represents the back of a card
-
     SET = simplegui.load_image('http://i.imgur.com/p6hCw9U.png')
     CARDWIDTH = SET.get_width()
     CARDHEIGHT = SET.get_height()
@@ -251,26 +243,20 @@ def drawlayer(layer, layernum, canvas):
     # calls the draw_card_back function
     for card in range(len(layer)):
         
-        DRAWSCALE = 1.25
-        DIST_FROM_LAST = 25
+        DIST_FROM_LAST = 25        
+        START_Y = 300
         
-        LOC_BACK_Y = 300
-        
-        LOC_BACK_Y = LOC_BACK_Y + DIST_FROM_LAST * card
+        LOC_BACK_Y = START_Y + DIST_FROM_LAST * card
         LOC_BACK_X = 100 * layernum
         
         if layer[card].exposed == False:
             draw_card_back(canvas, LOC_BACK_X, LOC_BACK_Y)
             
         else:
-            CARDWIDTH = 167
-            CARDHEIGHT = 243
             
             layer[card].set_X(LOC_BACK_X)
             layer[card].set_Y(LOC_BACK_Y)
             
-            SET = layer[card].exposedimg
-            CARD_SPOT_IN_SETIMG = layer[card].cardnum
             layer[card].get_cardfront(canvas)
 
             
@@ -279,11 +265,12 @@ def draw_shown_cards(canvas):
     # cards_shown holds the current cards that are shown from the deck.
     global cards_shown
     
-    LOC_BACK_X = 100
+    START_X = 200
     LOC_BACK_Y = 75
    
     for card in range(len(cards_shown)):
-        LOC_BACK_X += 100
+        LOC_BACK_X = START_X + 100 * card
+        
         cards_shown[card].get_cardfront(canvas)
         cards_shown[card].set_X(LOC_BACK_X)
         cards_shown[card].set_Y(LOC_BACK_Y)
@@ -294,11 +281,11 @@ def draw_tops(canvas):
     # than 0 it draws the last card in the top
     global top0, top1, top2, top3
     
-    TOPBACK = simplegui.load_image('http://i.imgur.com/MOQhHbc.png')
-    CARDWIDTH = TOPBACK.get_width()
-    CARDHEIGHT = TOPBACK.get_height()
-    DRAWSCALE = 1.1
+    TOPBLANK = simplegui.load_image('http://i.imgur.com/MOQhHbc.png')
+    CARDWIDTH = TOPBLANK.get_width()
+    CARDHEIGHT = TOPBLANK.get_height()
     
+    DRAWSCALE = 1.1
     LOC_BACK_Y = 76
         
     START_X = 500
@@ -308,43 +295,37 @@ def draw_tops(canvas):
     
     for tops in range(4):
             
-        LOC_BACK_X =START_X + DIST_BETWEEN * tops
+        LOC_BACK_X = START_X + DIST_BETWEEN * tops
         
-        canvas.draw_image(TOPBACK, (CARDWIDTH /2 , CARDHEIGHT / 2), 
+        canvas.draw_image(TOPBLANK, (CARDWIDTH /2 , CARDHEIGHT / 2), 
                      (CARDWIDTH, CARDHEIGHT), 
                      (LOC_BACK_X, LOC_BACK_Y), 
                      (CARDWIDTH * DRAWSCALE, CARDHEIGHT * DRAWSCALE))        
-        # BUG.
+                     
         if len(top_dict[tops]) > 0: 
             top_dict[tops][-1].set_X(LOC_BACK_X)
             top_dict[tops][-1].set_Y(LOC_BACK_Y)
             
-            SET = top_dict[tops][-1].exposedimg
-            CARD_SPOT_IN_SETIMG = top_dict[tops][-1].cardnum
             top_dict[tops][-1].get_cardfront(canvas)
 ### END OF Drawing function helpers ###
 
 ### Clicking/Backend function helpers ###    
 def show_new_cards_from_deck():
     # Checks if the player clicks on the deck gui element.
-    # If true, it appends new cards to cards_shown from the 
+    # If clicked, it appends new cards to cards_shown from the 
     # deck.
     
     global x, y, location_in_deck, cards_shown, shuffled
     
-    TOPLEFTDECK_Y = 19
-    TOPLEFTDECK_X = 59
+    TOPDECK = 19
+    LEFTDECK = 59
     
-    BOTTOMRIGHTDECK_Y = 131
-    BOTTOMRIGHTDECK_X = 143
-    
-    LOC_BACK_Y = 75
-    LOC_BACK_X = 100 
-    
+    BOTTOMDECK = 131
+    RIGHTDECK = 143    
         
     # Check if player has clicked on the deck
-    if BOTTOMRIGHTDECK_X > x > TOPLEFTDECK_X:
-        if BOTTOMRIGHTDECK_Y > y > TOPLEFTDECK_Y:
+    if RIGHTDECK > x > LEFTDECK:
+        if BOTTOMDECK > y > TOPDECK:
                 
             cards_shown = []
             
@@ -363,8 +344,6 @@ def show_new_cards_from_deck():
                 adding = 0
                 cards_shown = []
                                          
-            # Add if else statement here when the feature to move cards
-            # out of the deck is added. Potential bug
             for x in range(adding):
                 cards_shown.append(shuffled[x + location_in_deck])
                 cards_shown[x].set_exposed(True)
@@ -386,14 +365,14 @@ def last_card_in_layer_select(layer, layernum):
         LOC_BACK_Y = LOC_BACK_Y + DIST_FROM_LAST * len(layer)
         LOC_BACK_X = 100 * layernum
         
-        topleft_X = LOC_BACK_X - CARDWIDTH
-        topleft_Y = LOC_BACK_Y - CARDHEIGHT
+        LEFT = LOC_BACK_X - CARDWIDTH
+        TOP = LOC_BACK_Y - CARDHEIGHT
         
-        bottomright_X = LOC_BACK_X + CARDWIDTH
-        bottomright_Y = LOC_BACK_Y + CARDHEIGHT
+        RIGHT = LOC_BACK_X + CARDWIDTH
+        BOTTOM = LOC_BACK_Y + CARDHEIGHT
         
-        if bottomright_X > x > topleft_X:
-            if bottomright_Y > y > topleft_Y:
+        if RIGHT > x > LEFT:
+            if BOTTOM > y > TOP:
                 if card1 == " ":
                     if layer[-1].get_exposed() == True:
                         card1 = layer[-1]
@@ -405,55 +384,7 @@ def last_card_in_layer_select(layer, layernum):
                         card2 = layer[-1]
                     else:
                         layer[-1].set_exposed(True)
-
-    
-def check_cards_and_move():
-    # A "glueing" function. This function checks if the card2 can be moved to card1
-    # according to solitaire rules and moves them. If card1 is more than one card
-    # then it moves all the cards in the set to card2's location
-    global layercolour_dic, layerval_dic, card1, card2, shuffled 
-    global layer1, layer2, layer3, layer4, layer5, layer6, layer7, set_to_append
-    global cards_shown
-
-    if card2 == " ":
-        pass
-    elif card1 == str(card1):
-        pass
-    # fixes bug where if two kings are clicked the game crashes.
-    elif card1.get_val() == card2.get_val():
-        card1 = " "
-        card2 = " "
-        pass
-    else:
-        card1colour = card1.get_colour()
-        card2colour = card2.get_colour()
-        
-        card1val = card1.get_val()
-        card2val = card2.get_val()
-        if layerval_dic[card1val] == card2val:
-            if layercolour_dic[card1colour] == card2colour:  
-                if card1.get_location()[-1] != card1 and card1.get_location() != shuffled:
-                    card1_location = card1.get_location()
-                    
-                    for cards in set_to_append:
-                        card2.get_location().append(cards)
-                        card1_location.remove(cards)
-                        cards.set_location(card2.get_location())
-                        
-                    card1 = " "
-                    card2 = " "
-                    set_to_append = []
-                    
-                else:
-                    card2.get_location().append(card1)
-                    card1.get_location().remove(card1)
-                    card1.set_location(card2.get_location())
-                    if card1 in cards_shown:
-                        cards_shown.remove(card1)
-                        
-                    card1 = " "
-                    card2 = " "
-               
+                                       
         
 def check_click_on_cardsshown():
     # checks if the player has clicked on a card that was shown from the 
@@ -525,7 +456,53 @@ def select_multiple_cards_to_move(layer, layernum):
                             card2 = layer[cardloc]
                             # bug here
 
-                            
+
+def check_cards_and_move():
+    # A "glueing" function. This function checks if the card2 can be moved to card1
+    # according to solitaire rules and moves them. If card1 is more than one card
+    # then it moves all the cards in the set to card2's location
+    global layercolour_dic, layerval_dic, card1, card2, shuffled 
+    global layer1, layer2, layer3, layer4, layer5, layer6, layer7, set_to_append
+    global cards_shown
+
+    if card2 == " ":
+        pass
+    elif card1 == str(card1):
+        pass
+    # fixes bug where if two kings are clicked the game crashes.
+    elif card1.get_val() == "King":
+        pass
+    else:
+        card1colour = card1.get_colour()
+        card2colour = card2.get_colour()
+        
+        card1val = card1.get_val()
+        card2val = card2.get_val()
+        
+        if layerval_dic[card1val] == card2val:
+            if layercolour_dic[card1colour] == card2colour:  
+                if card1.get_location()[-1] != card1 and card1.get_location() != shuffled:
+                    card1_location = card1.get_location()
+                    
+                    for cards in set_to_append:
+                        card2.get_location().append(cards)
+                        card1_location.remove(cards)
+                        cards.set_location(card2.get_location())
+                        
+                    card1 = " "
+                    card2 = " "
+                    set_to_append = []
+                    
+                else:
+                    card2.get_location().append(card1)
+                    card1.get_location().remove(card1)
+                    card1.set_location(card2.get_location())
+                    if card1 in cards_shown:
+                        cards_shown.remove(card1)  
+                    card1 = " "
+                    card2 = " "
+
+
 def move_to_top_layers():
     global x, y, top0, top1, top2, top3, card1, card2, layerval_dic
     global shuffled, layer1, layer2, layer3, layer4, layer5, layer6 
@@ -554,11 +531,11 @@ def move_to_top_layers():
             break
         if card_left < x and x < card_right:
             if card_top < y and y < card_bot: 
+                
                 if card2 == " " and card1 != " ":
                     card2 = card1
                     card1 = " "
-                        
-                card2colour = card2.get_colour()
+
                 card2val = card2.get_val()
                 
                 if len(tops[numtop]) == 0:
@@ -600,15 +577,15 @@ def move_to_empty_layer():
         CARDWIDTH = 84 / 2
         CARDHEIGHT = 125 / 2
         
-        topleft_X = LOC_BACK_X - CARDWIDTH
-        topleft_Y = LOC_BACK_Y - CARDHEIGHT
+        LEFT = LOC_BACK_X - CARDWIDTH
+        TOP = LOC_BACK_Y - CARDHEIGHT
         
-        bottomright_X = LOC_BACK_X + CARDWIDTH
-        bottomright_Y = LOC_BACK_Y + CARDHEIGHT
+        RIGHT = LOC_BACK_X + CARDWIDTH
+        BOTTOM = LOC_BACK_Y + CARDHEIGHT
         if card1 == " ":
             pass
-        elif topleft_X < x < bottomright_X:
-            if topleft_Y < y < bottomright_Y:
+        elif LEFT < x < RIGHT:
+            if TOP < y < BOTTOM:
                 if len(layers[layernum]) == 0:
                     if len(set_to_append) == 0:
                         layers[layernum].append(card1)
@@ -637,6 +614,7 @@ def clear_cards():
     if card1 != " " and card2 != " ":
         card1 = " "
         card2 = " "
+        
         
 def check_if_win(canvas):
     global top0, top1, top2, top3
@@ -667,7 +645,6 @@ def draw_handler(canvas):
     drawlayer(layer7, 7, canvas)
     
     draw_shown_cards(canvas)
-    
     if card1 != " ":
         canvas.draw_text("Card1: " + card1.get_name(), [275,700],20, "black")
     
@@ -705,10 +682,9 @@ def mouse_handler(position):
     move_to_empty_layer()
     clear_cards()
     
-    
 # Make Frame
 frame = simplegui.create_frame('Solitaire', 1000, 850)
-frame.set_canvas_background('Green')
+frame.set_canvas_background('Teal')
 
 # Call Event Handlers
 frame.set_draw_handler(draw_handler)
