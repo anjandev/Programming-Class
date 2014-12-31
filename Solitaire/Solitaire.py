@@ -567,7 +567,7 @@ def move_to_top_layers():
 def move_to_empty_layer():
     # Allows the player to move a card or a group of cards to an empty layer
     global layer1, layer2, layer3, layer4, layer5, layer6, layer7
-    global set_to_append, card1, card2
+    global set_to_append, card1, card2, cards_shown
     
     layers = [layer1, layer2, layer3, layer4, layer5, layer6, layer7]
     
@@ -588,24 +588,32 @@ def move_to_empty_layer():
         elif LEFT < x < RIGHT:
             if TOP < y < BOTTOM:
                 if len(layers[layernum]) == 0:
-                    if len(set_to_append) == 0:
-                        layers[layernum].append(card1)
-                        card1.get_location().remove(card1)
-                        card1.set_location(layers[layernum])
-                        card1 = " "
-                        card2 = " "
+                    if card1.get_val() == "King":
+                        if len(set_to_append) == 0:
+                            layers[layernum].append(card1)
+                            card1.get_location().remove(card1)
+                            card1.set_location(layers[layernum])
+                            card1 = " "
+                            card2 = " "
+                            if card1 in cards_shown:
+                                cards_shown.remove(card1)
                         
-                    else:
-                        card1location = set_to_append[0].get_location()
+                        else:
+                            card1location = set_to_append[0].get_location()
                         
-                        for card in set_to_append:
-                            layers[layernum].append(card)
-                            card1location.remove(card)
-                            card.set_location(layers[layernum])
+                            for card in set_to_append:
+                                layers[layernum].append(card)
+                                card1location.remove(card)
+                                card.set_location(layers[layernum])
                             
-                        card1 = " "
-                        card2 = " "
-                        set_to_append = []
+                            card1 = " "
+                            card2 = " "
+                            set_to_append = []
+                            
+                    else:
+                            set_to_append = []
+                            card1 = " "
+                            card2 = " "
             
             
 def clear_cards():
