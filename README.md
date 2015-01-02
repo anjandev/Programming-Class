@@ -10,7 +10,10 @@ Scripts in the Competition Practice folder are programs I wrote to solve practic
 
 [The original questions are here](https://cemc.math.uwaterloo.ca/contests/computing/2013/stage1/juniorEn.pdf)
 
-##Hangman
+##Class_Examples
 
-Hangman is a game I wrote for a class project. 
+I store class examples in this folder for future reference.
 
+##Projects
+
+All projects that I made while I was in this class are stored here. Such as the various games that I had to program.
