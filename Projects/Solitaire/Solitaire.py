@@ -85,10 +85,10 @@ class Card:
 # Global variables
 layercolour_dic = {'red': 'black', 'black': 'red'}
 layerval_dic = {'Ace': '2', '2': '3', '3': '4', '4': '5', '5': '6', '6':'7',
-                '7':'8', '8':'9', '9': '10', '10': 'Joker', 'Joker' : 'Queen',
+                '7':'8', '8':'9', '9': '10', '10': 'Jack', 'Jack' : 'Queen',
                 'Queen': 'King', 'blank': 'Ace' }
 
-ranks = ("Ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Joker", "Queen", "King")
+ranks = ("Ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King")
 suits = ("Diamonds", "Spades", "Hearts", "Clovers")
 
 # This list temproraly holds all cards (in order of ranks) before they are shuffled.
