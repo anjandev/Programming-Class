@@ -63,7 +63,9 @@ class Card:
         LOC_BACK_Y = self.LOC_BACK_Y
         SET = self.exposedimg
             
-        return canvas.draw_image(SET, (CARDWIDTH / 2 + CARDWIDTH * CARD_SPOT_IN_SETIMG, CARDHEIGHT / 2), 
+        return canvas.draw_image(SET, (
+                      CARDWIDTH / 2 + CARDWIDTH * CARD_SPOT_IN_SETIMG, 
+                      CARDHEIGHT / 2), 
                      (CARDWIDTH, CARDHEIGHT), 
                      (LOC_BACK_X, LOC_BACK_Y), 
                      (CARDWIDTH * DRAWSCALE, CARDHEIGHT * DRAWSCALE))
@@ -200,11 +202,14 @@ def definecards(deckstart, suit, setimg, colour):
     global deck, ranks
    
     for x in range(13):
-        deck[x + deckstart] = Card(shuffled, suit, ranks[x], False, setimg, x, colour, 0, 0)
+        deck[x + deckstart] = Card(shuffled, suit, ranks[x],
+                                   False, setimg, x, colour, 0, 0)
 
 
 def shuffle():
-    # Copies cards to a seperate list(shuffled) and shuffles them. Shuffled (list) becomes the new deck.
+    # Copies cards to a seperate list(shuffled) and shuffles them. 
+    # Shuffled (list) becomes the new deck.
+    
     global deck, shuffled
     
     for card in deck:
@@ -220,7 +225,6 @@ def assign_loc(numofcards, layer, name_of_layer):
     
     for x in range(numofcards):
         layer.append(shuffled[0])
-        # To-do change location of card that was appended
         shuffled[0].set_location(layer)
         shuffled.pop(0)
 #### END OF Main function helpers ####
