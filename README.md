@@ -10,7 +10,7 @@ Scripts in the Competition Practice folder are programs I wrote to solve practic
 
 [Junior Questions](https://cemc.math.uwaterloo.ca/contests/computing/2013/stage1/juniorEn.pdf)
 
-[Senior Questions](https://cemc.math.uwaterloo.ca/contests/computing/2013/stage1/seniorEn.pdf)
+[Senior Questions](https://cemc.math.uwaterloo.ca/contests/computing/2014/stage%201/seniorEn.pdf)
 
 
 ##Class_Examples
