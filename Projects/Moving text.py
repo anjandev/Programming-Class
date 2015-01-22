@@ -8,13 +8,14 @@ FRAME_WIDTH = 700
 FRAME_HEIGHT = 700
 
 class Banner:
-    def __init__(self, message, pos, colour, size, vel, acc):
+    def __init__(self, message, pos, colour, size, vel, acc, bounce):
        self.message = message
        self.pos = pos
        self.colour = colour
        self.size = size
        self.vel = vel
        self.acc = acc
+       self.bounce = bounce
         
     def draw(self,canvas):
         canvas.draw_text(self.message, self.pos, self.size, self.colour)
@@ -23,18 +24,23 @@ class Banner:
         # x += v
         for i in range(2):
             self.pos[i] += self.vel[i]
-        
-        if frame.get_canvas_textwidth(self.message, self.size) + self.pos[0] >= FRAME_WIDTH:
-            self.vel[0] = self.vel[0] * -1
-        
-        if self.pos[0] <= 0:
-            self.vel[0] = self.vel[0] * -1
             
-        if self.pos[1] - 10 <= 0:
-            self.vel[1] = self.vel[1] * -1
+        if self.bounce == True:
+            if frame.get_canvas_textwidth(self.message, self.size) + self.pos[0] >= FRAME_WIDTH:
+                self.vel[0] = self.vel[0] * -1
+        
+            if self.pos[0] <= 0:
+                self.vel[0] = self.vel[0] * -1
             
-        if self.pos[1] >= FRAME_HEIGHT:
-            self.vel[1] = self.vel[1] * -1
+            if self.pos[1] - 10 <= 0:
+                self.vel[1] = self.vel[1] * -1
+            
+            if self.pos[1] >= FRAME_HEIGHT:
+                self.vel[1] = self.vel[1] * -1
+                
+        elif self.bounce == False:
+            self.pos[0] = self.pos[0] % FRAME_WIDTH
+            self.pos[1] = self.pos[1] % FRAME_HEIGHT
         
     def set_text(self, new_message):
         if len(new_message) > 0:
@@ -51,6 +57,12 @@ class Banner:
     
     def get_pos(self):
         return self.pos
+    
+    def set_bounce(self, bounce):
+        self.bounce = bounce
+    
+    def get_bounce(self):
+        return self.bounce
             
 # Handler for mouse click
 def message_handler(text_input):
@@ -59,6 +71,13 @@ def message_handler(text_input):
 def click_message_change():
     banner.set_text(inp.get_text())  
 
+def bounce_change():
+    
+    if banner.get_bounce():
+        banner.set_bounce(False)
+    else:
+        banner.set_bounce(True)
+    
 # Handler to draw on canvas
 def draw(canvas):
     banner.draw(canvas)
@@ -74,8 +93,7 @@ def keyup(key):
     if key == simplegui.KEY_MAP['up']:
         banner.vel[1] -= 1
     elif key == simplegui.KEY_MAP['down']:
-        banner.vel[1] += banner.acc
-            
+        banner.vel[1] += banner.acc        
             
 def timer_handler():
     new_colour = "#"
@@ -94,9 +112,10 @@ frame.set_keyup_handler(keyup)
 timer = simplegui.create_timer(500, timer_handler)
 
 # Start the frame animation
-banner = Banner("ayy lmao", [50,250], "blue", 24, [1,1], 1)
-inp = frame.add_input('Change message', message_handler, 100)
+banner = Banner("ayy lmao", [50,250], "blue", 24, [1,1], 1, False)
+inp = frame.add_input('Change message:', message_handler, 100)
 frame.add_button("Confirm", click_message_change)
+frame.add_button("Change Movement", bounce_change)
 
 frame.start()
 timer.start()
