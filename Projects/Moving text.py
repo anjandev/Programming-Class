@@ -17,17 +17,14 @@ class Background:
             pass
         self.width = self.image.get_width() 
         self.height = self.image.get_height()
-        self.draw_scaleX = FRAME_WIDTH // self.width
-        self.draw_scaleY = FRAME_HEIGHT // self.height
+        self.drawscale = 7
         
     def draw(self, canvas):
-        LOC_BACK_X = self.width / 2
-        LOC_BACK_Y = self.height / 2
 
         canvas.draw_image(self.image, (self.width / 2, self.height / 2 ), 
                      (self.width, self.height), 
-                     (LOC_BACK_X * self.draw_scaleX, LOC_BACK_Y * self.draw_scaleY), 
-                     (self.width * self.draw_scaleX, self.height * self.draw_scaleY))
+                     (50 * self.drawscale, 50 * self.drawscale), 
+                     (100 * self.drawscale, 100 * self.drawscale))
         
     def set_background(self, image):
         self.image = simplegui.load_image(image)
@@ -155,7 +152,7 @@ timer = simplegui.create_timer(500, timer_handler)
 
 # Start the frame animation
 banner = Banner("ayy lmao", [50,250], "blue", 24, [1,1], 1, False)
-background = Background("http://mario.nintendo.com/img/mario_logo.png")
+background = Background("http://img3.wikia.nocookie.net/__cb20120602231304/mario/images/3/32/8_Bit_Mario.png")
 inp = frame.add_input('Change message:', message_handler, 100)
 inp2 = frame.add_input('Change background:',background_handler, 100)
 frame.add_button("Confirm", click_message_change)
